@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LIZIVIDA — Devocionais para nutrir sua fé</title>
+  <meta name="description" content="Ebooks devocionais cristãos em formato digital. Compre, acesse na sua biblioteca e leia em qualquer dispositivo.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="LIZIVIDA">
+  <meta property="og:title" content="LIZIVIDA — Devocionais para nutrir sua fé">
+  <meta property="og:description" content="Ebooks devocionais cristãos em formato digital. Compre, acesse na sua biblioteca e leia em qualquer dispositivo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-lizivida.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="site-header"></div>
+
+  <main id="conteudo">
+    <!-- Hero -->
+    <section class="container hero" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow">Devocionais digitais</p>
+        <h1 id="hero-title">Devocionais para nutrir sua fé <em>todos os dias</em></h1>
+        <p class="lead">Escolha seu devocional, compre em poucos cliques e leia na sua biblioteca pessoal, no celular, tablet ou computador.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="devocionais.html">Ver devocionais</a>
+          <a class="btn btn--secondary" href="biblioteca.html">Criar minha conta</a>
+        </div>
+        <ul class="seals">
+          <li data-icon="zap" data-size="18"> Acesso imediato</li>
+          <li data-icon="phone" data-size="18"> Leia em qualquer dispositivo</li>
+          <li data-icon="shield" data-size="18"> Pagamento seguro</li>
+        </ul>
+      </div>
+      <div class="hero__art" id="hero-covers">
+        <svg aria-hidden="true" viewBox="0 0 400 480" fill="none" stroke="#C6A667" stroke-width="1.2" stroke-linecap="round">
+          <circle cx="205" cy="240" r="190" opacity=".55"/><circle cx="205" cy="240" r="170" opacity=".3"/>
+          <path d="M360 40c-30 40-30 80 0 120M360 40c30 30 30 70 0 100M360 160c-24-10-40-30-44-56"/>
+          <path d="M40 440c30-40 30-80 0-120M40 440c-30-30-30-70 0-100M40 320c24 10 40 30 44 56"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Versículo do dia -->
+    <section class="verse" aria-labelledby="versiculo">
+      <figure>
+        <h2 id="versiculo" class="eyebrow">Versículo do dia</h2>
+        <blockquote id="verse-text"></blockquote>
+        <figcaption id="verse-ref"></figcaption>
+      </figure>
+    </section>
+
+    <!-- Categorias -->
+    <section class="container section" id="categorias" aria-labelledby="categorias-titulo">
+      <div class="section-title">
+        <p class="eyebrow">Categorias</p>
+        <h2 id="categorias-titulo">Encontre o devocional para o seu momento</h2>
+        <span class="rule" aria-hidden="true"></span>
+      </div>
+      <ul class="grid grid--categories" id="categories-list"></ul>
+    </section>
+
+    <!-- Destaques -->
+    <section class="section section--alt" aria-labelledby="destaques">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-title section-title--left">
+            <p class="eyebrow">Em destaque</p>
+            <h2 id="destaques">Devocionais em destaque</h2>
+            <span class="rule" aria-hidden="true"></span>
+          </div>
+          <a class="link-arrow" href="devocionais.html" data-icon="arrow" data-size="16"> Ver todos</a>
+        </div>
+        <ul class="grid grid--products" id="featured-list"></ul>
+      </div>
+    </section>
+
+    <!-- Como funciona -->
+    <section class="container section" id="sobre" aria-labelledby="como-funciona">
+      <div class="section-title">
+        <p class="eyebrow">Como funciona</p>
+        <h2 id="como-funciona">Da compra à leitura, em três passos</h2>
+        <span class="rule" aria-hidden="true"></span>
+      </div>
+      <ol class="steps">
+        <li><span class="steps__icon" data-icon="userplus" data-size="28"></span><h3>Crie sua conta</h3><p>Cadastro rápido com e-mail e senha.</p></li>
+        <li><span class="steps__icon" data-icon="bag" data-size="28"></span><h3>Escolha e compre</h3><p>Selecione seus devocionais e pague com segurança.</p></li>
+        <li><span class="steps__icon" data-icon="book" data-size="28"></span><h3>Leia na sua biblioteca</h3><p>O ebook aparece na sua conta, pronto para ler.</p></li>
+      </ol>
+    </section>
+
+    <!-- Prévia da biblioteca -->
+    <section class="section section--alt" aria-labelledby="biblioteca">
+      <div class="container library">
+        <div>
+          <div class="section-title section-title--left">
+            <p class="eyebrow">Minha Biblioteca</p>
+            <h2 id="biblioteca">Sua estante devocional, sempre com você</h2>
+            <span class="rule" aria-hidden="true"></span>
+            <p>Cada devocional comprado fica guardado na sua conta. Abra, leia e retome a leitura quando quiser.</p>
+          </div>
+          <ul class="benefits">
+            <li data-icon="check" data-size="20"> Todos os seus devocionais em um só lugar</li>
+            <li data-icon="check" data-size="20"> Acompanhe seu progresso de leitura</li>
+            <li data-icon="check" data-size="20"> Continue de onde parou, em qualquer dispositivo</li>
+            <li data-icon="check" data-size="20"> Acesso sempre que quiser, sem depender de e-mail</li>
+          </ul>
+          <a class="btn btn--primary" href="biblioteca.html">Criar minha conta</a>
+        </div>
+        <div class="mockup" role="group" aria-label="Exemplo do painel Minha Biblioteca">
+          <div class="mockup__top"><p>Minha Biblioteca</p><span class="badge">Exemplo</span></div>
+          <ul id="library-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Depoimentos -->
+    <section class="container section" aria-labelledby="depoimentos">
+      <div class="section-title">
+        <p class="eyebrow">Depoimentos</p>
+        <h2 id="depoimentos">Quem lê, sente a diferença</h2>
+        <span class="rule" aria-hidden="true"></span>
+      </div>
+      <ul class="grid grid--testimonials" id="testimonials-list"></ul>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter on-forest" aria-labelledby="newsletter">
+      <div class="newsletter__inner">
+        <h2 id="newsletter">Receba devocionais gratuitos</h2>
+        <span class="rule rule--center" aria-hidden="true"></span>
+        <p>Uma palavra de esperança na sua caixa de entrada. Sem spam, cancele quando quiser.</p>
+        <form id="newsletter-form">
+          <label class="sr-only" for="email-news">Seu e-mail</label>
+          <input id="email-news" type="email" required placeholder="Seu melhor e-mail" autocomplete="email">
+          <button class="btn btn--gold" type="submit">Receber devocionais gratuitos</button>
+        </form>
+        <p id="newsletter-status" role="status" class="newsletter__status"></p>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/main.js"></script>
+  <script type="module" src="js/home-catalog.js"></script>
+</body>
+</html>

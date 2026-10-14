@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minha conta | LIZIVIDA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-lizivida.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="site-header"></div>
+
+  <main id="conteudo" class="container account">
+    <p id="account-loading" class="muted" role="status">Carregando…</p>
+
+    <!-- Visitante: entrar / criar conta -->
+    <section id="auth-view" class="auth card" hidden aria-labelledby="auth-title">
+      <h1 id="auth-title">Entrar na sua conta</h1>
+      <span class="rule" aria-hidden="true"></span>
+      <div class="tabs" role="group" aria-label="Escolha uma opção">
+        <button type="button" class="tab is-active" data-mode="login" aria-pressed="true">Entrar</button>
+        <button type="button" class="tab" data-mode="signup" aria-pressed="false">Criar conta</button>
+      </div>
+      <div id="google-block" hidden>
+      <button type="button" class="btn btn--google btn--block" id="google-btn">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+        Continuar com o Google
+      </button>
+      <p class="divider"><span>ou com e-mail</span></p>
+      </div>
+      <form id="auth-form" novalidate>
+        <div class="field" id="name-field" hidden>
+          <label for="auth-name">Nome</label>
+          <input id="auth-name" type="text" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="auth-email">E-mail</label>
+          <input id="auth-email" type="email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="auth-password">Senha</label>
+          <input id="auth-password" type="password" required minlength="6" autocomplete="current-password">
+          <small class="muted">Mínimo de 6 caracteres.</small>
+        </div>
+        <button class="btn btn--primary btn--block" type="submit" id="auth-submit">Entrar</button>
+        <p id="auth-message" class="form-message" role="status"></p>
+      </form>
+    </section>
+
+    <!-- Usuária logada: painel -->
+    <section id="panel-view" hidden aria-labelledby="panel-title">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Minha conta</p>
+          <h1 id="panel-title">Olá!</h1>
+          <p class="muted" id="panel-email"></p>
+        </div>
+        <button type="button" class="btn btn--secondary" id="logout">Sair</button>
+      </div>
+
+      <div class="panel-stats">
+        <div class="card stat"><span class="stat__n" id="stat-total">0</span><span class="muted">devocionais na biblioteca</span></div>
+        <div class="card stat"><span class="stat__n" id="stat-done">0</span><span class="muted">concluídos</span></div>
+      </div>
+
+      <h2 class="panel-sub">Minha Biblioteca</h2>
+      <ul id="panel-library" class="panel-library"></ul>
+      <div id="panel-empty" class="card empty" hidden>
+        <p>Sua biblioteca ainda está vazia.</p>
+        <a class="btn btn--primary" href="devocionais.html">Ver devocionais</a>
+      </div>
+      <p id="panel-error" class="form-message" role="alert"></p>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/main.js"></script>
+  <script type="module" src="js/account.js"></script>
+</body>
+</html>

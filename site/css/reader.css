@@ -1,0 +1,21 @@
+/* Leitor + catálogo */
+.reader { background: var(--cream-deep); min-height: 100vh; }
+.rd-bar { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.5rem 0.75rem; background: var(--cream); border-bottom: 1px solid rgba(52, 78, 65, 0.12); }
+.rd-bar .logo img { display: block; height: 32px; width: auto; }
+.rd-title { flex: 1; min-width: 0; text-align: center; font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rd-main { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 1.25rem 1rem 2rem; }
+.rd-msg { max-width: 28rem; padding: 2rem 1rem; text-align: center; }
+.rd-msg a { text-decoration: underline; }
+.rd-msg .btn { margin-left: 0.5rem; text-decoration: none; }
+#rd-book { width: 100%; display: flex; justify-content: center; }
+.reader .bk-book { width: min(92vw, 520px); }
+.rd-nav { display: flex; align-items: center; justify-content: space-between; width: min(92vw, 520px); }
+
+.catalog .section-title h1 { font-size: clamp(2.25rem, 5vw, 3rem); }
+.catalog-search { display: flex; gap: 0.5rem; max-width: 32rem; margin-top: 1.5rem; }
+.catalog-search input { flex: 1; min-height: 48px; padding-inline: 1.25rem; border: 0; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px rgba(52, 78, 65, 0.25); }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.25rem 0 1rem; }
+.chip { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 1rem; border-radius: 999px; background: rgba(163, 177, 138, 0.3); font-size: 0.875rem; font-weight: 600; transition: background-color 0.15s; }
+.chip:hover { background: rgba(163, 177, 138, 0.55); }
+.chip.is-on { background: var(--forest); color: var(--cream); }
+.empty-state { display: flex; flex-direction: column; align-items: center; gap: 1rem; margin-top: 1.5rem; padding: 2.5rem 1rem; text-align: center; }

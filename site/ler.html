@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ler devocional | LIZIVIDA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Lora:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,700;1,400&family=Parisienne&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-lizivida.svg">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/reader.css">
+</head>
+<body class="reader">
+  <header class="rd-bar">
+    <a class="btn btn--ghost btn--sm" href="biblioteca.html">← Minha conta</a>
+    <p id="rd-title" class="rd-title"></p>
+    <a class="logo" href="index.html" aria-label="LIZIVIDA"><img src="assets/logo-lizivida.svg" alt="LIZIVIDA" width="72" height="32"></a>
+  </header>
+
+  <main class="rd-main">
+    <p id="rd-msg" class="rd-msg" role="status">Carregando…</p>
+    <div id="rd-book" hidden></div>
+    <div id="rd-nav" class="rd-nav" hidden>
+      <button class="btn btn--secondary btn--sm" id="rd-prev" type="button">Anterior</button>
+      <span id="rd-count" class="muted"></span>
+      <button class="btn btn--primary btn--sm" id="rd-next" type="button">Próxima</button>
+    </div>
+  </main>
+
+  <script type="module" src="js/reader.js"></script>
+</body>
+</html>

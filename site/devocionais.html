@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devocionais | LIZIVIDA</title>
+  <meta name="description" content="Todos os devocionais da LIZIVIDA.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-lizivida.svg">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/reader.css">
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <div id="site-header"></div>
+
+  <main id="conteudo" class="container section catalog">
+    <div class="section-title section-title--left">
+      <p class="eyebrow">Loja</p>
+      <h1>Devocionais</h1>
+      <span class="rule" aria-hidden="true"></span>
+    </div>
+
+    <form class="catalog-search" role="search" action="devocionais.html">
+      <label class="sr-only" for="catalog-q">Buscar por título ou autoria</label>
+      <input id="catalog-q" name="q" type="search" placeholder="Buscar por título ou autoria">
+      <button class="btn btn--primary" type="submit">Buscar</button>
+    </form>
+
+    <nav aria-label="Categorias"><ul class="chips" id="catalog-cats"></ul></nav>
+    <p class="muted" id="catalog-count" role="status"></p>
+    <p class="muted" id="catalog-loading">Carregando devocionais…</p>
+
+    <ul class="grid grid--products" id="catalog-list"></ul>
+    <div class="card empty-state" id="catalog-empty" hidden>
+      <p>Nenhum devocional encontrado por aqui ainda.</p>
+      <a class="btn btn--secondary" href="devocionais.html">Ver todos</a>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="js/data.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/main.js"></script>
+  <script type="module" src="js/catalog-page.js"></script>
+</body>
+</html>
