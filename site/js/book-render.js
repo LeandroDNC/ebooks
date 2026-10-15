@@ -14,10 +14,29 @@ export const FONTS = [
   { name: "Parisienne", css: "'Parisienne', cursive" },
 ];
 
-export const LOGO = "assets/logo-lizivida.svg";
+export const LOGO = "assets/logo-intima-graca.svg";
 
 export const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+// ---- Saneamento: o conteúdo vem do banco; nada dele entra em atributo/estilo sem validar ----
+const ALINHAMENTOS = ["left", "center", "right", "justify"];
+const ESTILOS_LINHA = ["solid", "dashed", "dotted", "double", "fade", "ornament"];
+const CORES_MARCA = ["amarelo", "verde", "rosa", "azul"];
+const pick = (v, permitidos, padrao) => (permitidos.includes(v) ? v : padrao);
+const RE_COR = /^(#[0-9a-fA-F]{3,8}|(rgb|rgba|hsl|hsla)\([0-9a-zA-Z.,%\s/-]{1,40}\)|[a-zA-Z]{3,20})$/;
+const cor = (v, padrao) => (typeof v === "string" && RE_COR.test(v.trim()) ? v.trim() : padrao);
+/** Só http(s), caminhos relativos e data:image. Qualquer outra coisa (javascript:, etc.) vira "". */
+function safeUrl(v) {
+  if (typeof v !== "string" || !v || v.length > 4000) return "";
+  if (/^data:image\/(png|jpe?g|webp|gif|svg\+xml);base64,[A-Za-z0-9+/=]+$/.test(v)) return v;
+  try {
+    const u = new URL(v, "https://exemplo.invalid/");
+    return /^https?:$/.test(u.protocol) || /^[\w./-]+$/.test(v) ? v : "";
+  } catch {
+    return "";
+  }
+}
 
 const fontCss = (name) => (FONTS.find((f) => f.name === name) || FONTS[0]).css;
 
@@ -32,7 +51,7 @@ function luminance(hex) {
 }
 
 const logoTag = (bg) =>
-  `<img class="bk-logo${luminance(bg) < 0.4 ? " is-light" : ""}" src="${LOGO}" alt="LIZIVIDA" draggable="false">`;
+  `<img class="bk-logo${luminance(bg) < 0.4 ? " is-light" : ""}" src="${LOGO}" alt="Íntima Graça" draggable="false">`;
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const handleHtml = '<span class="bk-handle" data-handle="1" aria-hidden="true"></span>';
@@ -43,7 +62,27 @@ function freeStyle(f) {
   return `position:absolute;left:${Number(f.x) || 0}%;top:${Number(f.y) || 0}%;width:${clamp(Number(f.w) || 40, 5, 100)}%;margin:0;z-index:2;`;
 }
 
-function blockHtml(b, selectedId, editor) {
+/** Texto com marcações (<mark>). `marcas`: [{s, e, c, id}] em posições do texto original. */
+function textoHtml(text, marcas) {
+  const t = String(text ?? "");
+  const nl = (x) => esc(x).replace(/\n/g, "<br>");
+  if (!marcas || !marcas.length) return nl(t) || "&nbsp;";
+  const ms = [...marcas].filter((m) => m.e > m.s).sort((a, b) => a.s - b.s);
+  let out = "";
+  let pos = 0;
+  for (const m of ms) {
+    const ini = Math.max(m.s, pos);
+    const fim = Math.min(m.e, t.length);
+    if (fim <= ini) continue;
+    out += nl(t.slice(pos, ini));
+    out += `<mark class="bk-mark bk-mark--${pick(m.c, CORES_MARCA, "amarelo")}" data-marca="${esc(m.id || "")}">${nl(t.slice(ini, fim))}</mark>`;
+    pos = fim;
+  }
+  out += nl(t.slice(pos));
+  return out || "&nbsp;";
+}
+
+function blockHtml(b, selectedId, editor, marcas) {
   const sel = b.id === selectedId ? " is-selected" : "";
   const h = sel && editor ? handleHtml : "";
   const free = freeStyle(b.free);
@@ -51,26 +90,26 @@ function blockHtml(b, selectedId, editor) {
     const style = [
       `font-family:${fontCss(b.font)}`,
       `font-size:${Number(b.size) || 4}cqw`,
-      `color:${esc(b.color || "#344E41")}`,
+      `color:${cor(b.color, "#344E41")}`,
       `font-weight:${b.bold ? 700 : 400}`,
       `font-style:${b.italic ? "italic" : "normal"}`,
       `text-decoration:${b.underline ? "underline" : "none"}`,
-      `text-align:${b.align || "left"}`,
+      `text-align:${pick(b.align, ALINHAMENTOS, "left")}`,
     ].join(";");
-    return `<p class="bk-block bk-text${sel}" data-block="${esc(b.id)}" style="${free}${style}">${esc(b.text || "").replace(/\n/g, "<br>") || "&nbsp;"}${h}</p>`;
+    return `<p class="bk-block bk-text${sel}" data-block="${esc(b.id)}" style="${free}${style}">${textoHtml(b.text, marcas)}${h}</p>`;
   }
   if (b.type === "image") {
     const iw = b.free ? 100 : Number(b.width) || 100;
-    const img = b.src
-      ? `<img src="${esc(b.src)}" alt="${esc(b.alt || "")}" draggable="false" style="width:${iw}%;border-radius:${Number(b.radius) || 0}px">`
+    const img = safeUrl(b.src)
+      ? `<img src="${esc(safeUrl(b.src))}" alt="${esc(b.alt || "")}" draggable="false" style="width:${iw}%;border-radius:${Number(b.radius) || 0}px">`
       : `<span class="bk-img-empty">Foto</span>`;
-    return `<figure class="bk-block bk-img${sel}" data-block="${esc(b.id)}" style="${free}text-align:${b.align || "center"}">${img}${h}</figure>`;
+    return `<figure class="bk-block bk-img${sel}" data-block="${esc(b.id)}" style="${free}text-align:${pick(b.align, ALINHAMENTOS, "center")}">${img}${h}</figure>`;
   }
   if (b.type === "line") {
     const w = b.free ? 100 : Number(b.width) || 60;
     const th = Number(b.thickness) || 2;
-    const col = esc(b.color || "#C6A667");
-    const st = b.style || "solid";
+    const col = cor(b.color, "#C6A667");
+    const st = pick(b.style, ESTILOS_LINHA, "solid");
     const just = b.align === "left" ? "flex-start" : b.align === "right" ? "flex-end" : "center";
     let inner;
     if (st === "ornament") {
@@ -88,12 +127,12 @@ function blockHtml(b, selectedId, editor) {
 }
 
 /** Página de conteúdo. Blocos "livres" ficam fora do fluxo, posicionados na página. */
-export function renderPage(page, selectedId = null, editor = false) {
-  const bg = page.bg || "#FFFFFF";
+export function renderPage(page, selectedId = null, editor = false, marcas = null) {
+  const bg = cor(page.bg, "#FFFFFF");
   const blocks = page.blocks || [];
-  const flow = blocks.filter((b) => !b.free).map((b) => blockHtml(b, selectedId, editor)).join("");
-  const free = blocks.filter((b) => b.free).map((b) => blockHtml(b, selectedId, editor)).join("");
-  return `<div class="bk-page" style="background:${esc(bg)}">
+  const flow = blocks.filter((b) => !b.free).map((b) => blockHtml(b, selectedId, editor, marcas && marcas[b.id])).join("");
+  const free = blocks.filter((b) => b.free).map((b) => blockHtml(b, selectedId, editor, marcas && marcas[b.id])).join("");
+  return `<div class="bk-page" style="background:${cor(bg, "#FFFFFF")}">
     <div class="bk-body">${flow}</div>
     ${free}
     ${logoTag(bg)}
@@ -101,17 +140,17 @@ export function renderPage(page, selectedId = null, editor = false) {
 }
 
 function coverArtHtml(art, sel) {
-  if (!art || !art.src) return "";
+  if (!art || !safeUrl(art.src)) return "";
   const cls = `bk-art bk-block${sel ? " is-selected" : ""}`;
   const size = Number(art.size) || 50;
   const pos = `left:${Number(art.x) || 50}%;top:${Number(art.y) || 35}%;width:${size}%;`;
   const ratio = Number(art.ratio) > 0 ? Number(art.ratio) : 1;
   if (art.recolor === false) {
-    return `<img class="${cls}" data-block="cover-art" src="${esc(art.src)}" alt="" draggable="false" style="${pos}">`;
+    return `<img class="${cls}" data-block="cover-art" src="${esc(safeUrl(art.src))}" alt="" draggable="false" style="${pos}">`;
   }
   // Recolor: a imagem vira máscara e recebe a cor escolhida (vale para SVG e PNG de uma cor/transparência).
-  const m = `url('${String(art.src).replace(/'/g, "%27")}')`;
-  return `<span class="${cls} bk-art--mask" data-block="cover-art" role="presentation" style="${pos}aspect-ratio:${ratio};background-color:${esc(art.color || "#C6A667")};-webkit-mask-image:${m};mask-image:${m}"></span>`;
+  const m = `url('${String(safeUrl(art.src)).replace(/['"()\\]/g, (c) => "%" + c.charCodeAt(0).toString(16))}')`;
+  return `<span class="${cls} bk-art--mask" data-block="cover-art" role="presentation" style="${pos}aspect-ratio:${ratio};background-color:${cor(art.color, "#C6A667")};-webkit-mask-image:${esc(m)};mask-image:${esc(m)}"></span>`;
 }
 
 const COVER_DEFAULTS = {
@@ -132,19 +171,19 @@ function coverTextStyle(st, auto) {
   return [
     `font-family:${fontCss(st.font)}`,
     `font-size:${Number(st.size) || 4}cqw`,
-    `color:${esc(st.color || auto)}`,
+    `color:${cor(st.color || auto, auto)}`,
     `font-weight:${st.bold ? 700 : 400}`,
     `font-style:${st.italic ? "italic" : "normal"}`,
     `text-decoration:${st.underline ? "underline" : "none"}`,
-    `text-align:${st.align || "center"}`,
+    `text-align:${pick(st.align, ALINHAMENTOS, "center")}`,
   ].join(";");
 }
 
 export function renderCover(book, selectedId = null, editor = false) {
-  const bg = book.coverColor || "#344E41";
-  const withImg = !!book.coverImage;
+  const bg = cor(book.coverColor, "#344E41");
+  const withImg = !!safeUrl(book.coverImage);
   const auto = withImg || luminance(bg) < 0.4 ? "#F8F6F0" : "#1F3329";
-  const img = withImg ? `<img class="bk-cover-img" src="${esc(book.coverImage)}" alt="" draggable="false">` : "";
+  const img = withImg ? `<img class="bk-cover-img" src="${esc(safeUrl(book.coverImage))}" alt="" draggable="false">` : "";
   const mk = (id, tag, extra, text) => {
     const st = coverStyle(book, id);
     const on = selectedId === id;
@@ -154,7 +193,7 @@ export function renderCover(book, selectedId = null, editor = false) {
   };
   const t = mk("cover-title", "h1", "", book.title || "Título do ebook");
   const a = mk("cover-author", "p", " bk-cover-author", book.author || "Nome da autora");
-  return `<div class="bk-page bk-cover" style="background:${esc(bg)};color:${auto}">
+  return `<div class="bk-page bk-cover" style="background:${cor(bg, "#344E41")};color:${auto}">
     ${img}
     ${coverArtHtml(book.coverArt, selectedId === "cover-art")}
     <div class="bk-cover-text${withImg ? " has-img" : ""}">${t.free ? "" : t.el}${a.free ? "" : a.el}</div>
@@ -173,7 +212,7 @@ export function creditsPage(book) {
     `© ${year} ${holder}. Todos os direitos reservados.`,
     book.isbn ? `ISBN: ${book.isbn}` : "",
     book.creditsText || "",
-    "Publicado por LIZIVIDA. A reprodução, total ou parcial, sem autorização prévia é proibida (Lei nº 9.610/1998).",
+    "Publicado por Íntima Graça. A reprodução, total ou parcial, sem autorização prévia é proibida (Lei nº 9.610/1998).",
   ].filter(Boolean);
   return {
     id: "credits",
@@ -186,12 +225,13 @@ export function creditsPage(book) {
 }
 
 /** Sequência final de páginas: capa, créditos (início ou fim) e conteúdo. */
-export function buildSequence(book) {
-  const credits = { html: renderPage(creditsPage(book)), kind: "credits" };
-  const seq = [{ html: renderCover(book), kind: "cover" }];
+export function buildSequence(book, marcas = null) {
+  const cred = creditsPage(book);
+  const credits = { html: renderPage(cred, null, false, marcas), kind: "credits", page: cred };
+  const seq = [{ html: renderCover(book), kind: "cover", page: null }];
   const front = (book.creditsPosition || "front") === "front";
   if (front) seq.push(credits);
-  (book.pages || []).forEach((p) => seq.push({ html: renderPage(p), kind: "page" }));
+  (book.pages || []).forEach((p) => seq.push({ html: renderPage(p, null, false, marcas), kind: "page", page: p }));
   if (!front) seq.push(credits);
   return seq;
 }
@@ -212,6 +252,7 @@ export class FlipBook {
     this.current = 0;
     this.total = pagesHtml.length;
     this.busy = false;
+    this.locked = false;
     this.reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     root.classList.add("bk-book");
     root.innerHTML = pagesHtml
@@ -292,7 +333,7 @@ export class FlipBook {
     let d = null;
 
     root.addEventListener("pointerdown", (e) => {
-      if (this.busy || (e.button && e.button > 0)) return;
+      if (this.locked || this.busy || (e.button && e.button > 0)) return;
       d = { x: e.clientX, y: e.clientY, id: e.pointerId, lastX: e.clientX, lastT: performance.now(), v: 0, active: false, dir: 0, k: -1, angle: 0 };
     });
 

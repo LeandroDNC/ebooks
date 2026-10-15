@@ -1,0 +1,237 @@
+/* Versículo do dia
+   Fontes (carregar no <head>): Great Vibes, Cormorant Garamond (itálico 500), Cinzel.
+   Cores: creme #F8F6F0, sálvia #A3B18A, verde #344E41, dourado #C6A667.
+   O dourado puro não passa em contraste sobre creme: para TEXTO usamos #7F6428 (5,2:1);
+   o dourado puro fica nos filetes. Na variante escura, texto dourado claro #D9BE85 (5:1). */
+
+.versiculo-faixa {
+  background: #a3b18a;
+  padding: 3.5rem 1rem;
+}
+
+.versiculo {
+  --vdd-creme: #f8f6f0;
+  --vdd-salvia: #a3b18a;
+  --vdd-verde: #344e41;
+  --vdd-dourado: #c6a667;
+  --vdd-fundo: var(--vdd-creme);
+  --vdd-texto: var(--vdd-verde);
+  --vdd-ref: #7f6428;
+  --vdd-aspas: #a3b18a;
+
+  position: relative;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2.75rem 1.5rem 2.25rem;
+  background: var(--vdd-fundo);
+  color: var(--vdd-texto);
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(31, 51, 41, 0.1), 0 18px 44px rgba(31, 51, 41, 0.16);
+  animation: versiculo-entrada 0.8s ease both;
+  overflow: hidden;
+}
+
+/* Filetes dourados nas bordas superior e inferior */
+.versiculo::before,
+.versiculo::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--vdd-dourado) 20%, var(--vdd-dourado) 80%, transparent);
+}
+.versiculo::before { top: 0; }
+.versiculo::after { bottom: 0; }
+
+.versiculo__titulo {
+  margin: 0;
+  font-family: "Great Vibes", "Brush Script MT", cursive;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 10vw, 3.8rem);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--vdd-texto);
+  text-shadow: 0.4px 0 currentColor; /* engrossa levemente o traço fino da caligrafia */
+}
+
+.versiculo__filete {
+  display: block;
+  width: 56px;
+  height: 2px;
+  margin: 0.9rem auto 0;
+  background: var(--vdd-dourado);
+  border-radius: 2px;
+}
+
+.versiculo__rotulo {
+  display: inline-block;
+  margin: 1rem 0 0;
+  padding: 0.3rem 0.9rem;
+  border: 1px solid var(--vdd-ref);
+  border-radius: 999px;
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vdd-ref);
+}
+
+.versiculo__texto {
+  position: relative;
+  margin: 1.5rem auto 0;
+  max-width: 36rem;
+  padding: 2.6rem 0.5rem 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.45rem, 5.6vw, 2rem);
+  line-height: 1.4;
+  text-wrap: balance;
+  quotes: none;
+}
+/* Aspas grandes, só decoração */
+.versiculo__texto::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.35rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 5.5rem;
+  line-height: 1;
+  color: var(--vdd-aspas);
+  pointer-events: none;
+}
+
+.versiculo__ref {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  margin: 1.4rem 0 0;
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vdd-ref);
+}
+.versiculo__ref::before,
+.versiculo__ref::after {
+  content: "";
+  flex: 0 1 3rem;
+  height: 1px;
+  background: var(--vdd-dourado);
+}
+.versiculo__ref cite { font-style: normal; }
+.versiculo__versao {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  opacity: 0.9;
+}
+.versiculo__versao::before { content: "·"; margin-right: 0.5rem; }
+
+.versiculo__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 1.75rem;
+}
+
+.versiculo__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 46px;
+  padding: 0.65rem 1.25rem;
+  border: 1px solid var(--vdd-texto);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--vdd-texto);
+  font: 600 0.875rem/1.2 "Manrope", system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.versiculo__btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(31, 51, 41, 0.18); }
+.versiculo__btn:active { transform: none; }
+.versiculo__btn:focus-visible { outline: 2px solid var(--vdd-ref); outline-offset: 3px; }
+.versiculo__btn--principal { background: var(--vdd-texto); color: var(--vdd-fundo); }
+.versiculo__btn:not(.versiculo__btn--principal):hover { background: var(--vdd-texto); color: var(--vdd-fundo); }
+
+.versiculo__aviso {
+  min-height: 1.4rem;
+  margin: 0.75rem 0 0;
+  font: 600 0.85rem/1.4 "Manrope", system-ui, sans-serif;
+  color: var(--vdd-ref);
+}
+
+/* Variante escura, para banners */
+.versiculo--escuro {
+  --vdd-fundo: #344e41;
+  --vdd-texto: #f8f6f0;
+  --vdd-ref: #d9be85;
+  --vdd-aspas: rgba(163, 177, 138, 0.55);
+}
+
+@keyframes versiculo-entrada {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (min-width: 640px) {
+  .versiculo { padding: 3.25rem 3rem 2.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .versiculo { animation: none; }
+  .versiculo__btn { transition: none; }
+  .versiculo__btn:hover { transform: none; }
+}
+
+/* ===== Versão compacta (menos espaço vazio) ===== */
+.versiculo-faixa { padding: 1.5rem 1rem; }
+
+.versiculo { max-width: 40rem; padding: 1.4rem 1.25rem 1.15rem; }
+.versiculo::before, .versiculo::after { height: 2px; }
+
+.versiculo__titulo { font-size: clamp(2.1rem, 8vw, 2.7rem); line-height: 1.05; }
+.versiculo__filete { width: 44px; margin-top: 0.4rem; }
+.versiculo__rotulo { margin-top: 0.6rem; padding: 0.2rem 0.75rem; font-size: 0.65rem; }
+
+.versiculo__texto {
+  margin-top: 0.4rem;
+  padding: 1.7rem 0.25rem 0;
+  max-width: 34rem;
+  font-size: clamp(1.25rem, 4.6vw, 1.6rem);
+  line-height: 1.35;
+}
+.versiculo__texto::before { top: -0.55rem; font-size: 3.6rem; }
+
+.versiculo__ref { margin-top: 0.8rem; font-size: 0.8rem; gap: 0.7rem; }
+.versiculo__ref::before, .versiculo__ref::after { flex-basis: 2.2rem; }
+
+.versiculo__acoes { margin-top: 0.9rem; gap: 0.5rem; }
+.versiculo__btn { min-height: 44px; padding: 0.4rem 1rem; font-size: 0.82rem; }
+
+.versiculo__aviso { min-height: 0; margin: 0; }
+.versiculo__aviso:not(:empty) { margin-top: 0.5rem; }
+
+@media (min-width: 640px) {
+  .versiculo-faixa { padding: 2rem 1rem; }
+  .versiculo { padding: 1.6rem 2rem 1.3rem; }
+}
+
+.versiculo__acoes .versiculo__btn { flex: 0 1 auto; }
+@media (max-width: 480px) { .versiculo__acoes .versiculo__btn { flex: 1 1 100%; } .versiculo__acoes .versiculo__btn--principal { order: -1; } }
+
+.versiculo__acoes .versiculo__btn { flex: 0 1 auto; padding-inline: 1.4rem; }
+@media (max-width: 480px) { .versiculo__acoes .versiculo__btn { flex: 1 1 100%; } }

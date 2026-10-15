@@ -2,19 +2,27 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://sezaazpoybpqnhayzgkk.supabase.co wss://sezaazpoybpqnhayzgkk.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LIZIVIDA — Devocionais para nutrir sua fé</title>
+  <title>Íntima Graça — Devocionais para nutrir sua fé</title>
+  <meta name="theme-color" content="#f8f6f0">
   <meta name="description" content="Ebooks devocionais cristãos em formato digital. Compre, acesse na sua biblioteca e leia em qualquer dispositivo.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
-  <meta property="og:site_name" content="LIZIVIDA">
-  <meta property="og:title" content="LIZIVIDA — Devocionais para nutrir sua fé">
+  <meta property="og:site_name" content="Íntima Graça">
+  <meta property="og:title" content="Íntima Graça — Devocionais para nutrir sua fé">
   <meta property="og:description" content="Ebooks devocionais cristãos em formato digital. Compre, acesse na sua biblioteca e leia em qualquer dispositivo.">
+  <script src="js/tema-inicial.js?v=202610151436"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="assets/logo-lizivida.svg">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-intima-graca.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=202610151436">
+  <link rel="stylesheet" href="css/theme.css?v=202610151436">
+  <link rel="stylesheet" href="css/versiculo-do-dia.css?v=202610151436">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Íntima Graça","inLanguage":"pt-BR","description":"Ebooks devocionais cristãos em formato digital."}</script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -37,23 +45,19 @@
           <li data-icon="shield" data-size="18"> Pagamento seguro</li>
         </ul>
       </div>
-      <div class="hero__art" id="hero-covers">
-        <svg aria-hidden="true" viewBox="0 0 400 480" fill="none" stroke="#C6A667" stroke-width="1.2" stroke-linecap="round">
-          <circle cx="205" cy="240" r="190" opacity=".55"/><circle cx="205" cy="240" r="170" opacity=".3"/>
-          <path d="M360 40c-30 40-30 80 0 120M360 40c30 30 30 70 0 100M360 160c-24-10-40-30-44-56"/>
-          <path d="M40 440c30-40 30-80 0-120M40 440c-30-30-30-70 0-100M40 320c24 10 40 30 44 56"/>
-        </svg>
+      <div class="hero__art">
+        <img class="hero__img" src="assets/logobanner.svg" width="1536" height="1024" alt="Devocionais e ebooks Íntima Graça em tablet, celular e computador" decoding="async" fetchpriority="high" draggable="false">
       </div>
     </section>
 
-    <!-- Versículo do dia -->
-    <section class="verse" aria-labelledby="versiculo">
-      <figure>
-        <h2 id="versiculo" class="eyebrow">Versículo do dia</h2>
-        <blockquote id="verse-text"></blockquote>
-        <figcaption id="verse-ref"></figcaption>
-      </figure>
-    </section>
+    <!-- Versículo do dia (abaixo do hero) -->
+    <div class="versiculo-faixa">
+      <section data-versiculo-do-dia data-marca="Íntima Graça" aria-label="Versículo do dia">
+        <noscript>
+          <p>Salmos 46:10 — “Aquietai-vos e sabei que eu sou Deus.”</p>
+        </noscript>
+      </section>
+    </div>
 
     <!-- Categorias -->
     <section class="container section" id="categorias" aria-labelledby="categorias-titulo">
@@ -105,10 +109,10 @@
             <p>Cada devocional comprado fica guardado na sua conta. Abra, leia e retome a leitura quando quiser.</p>
           </div>
           <ul class="benefits">
-            <li data-icon="check" data-size="20"> Todos os seus devocionais em um só lugar</li>
-            <li data-icon="check" data-size="20"> Acompanhe seu progresso de leitura</li>
-            <li data-icon="check" data-size="20"> Continue de onde parou, em qualquer dispositivo</li>
-            <li data-icon="check" data-size="20"> Acesso sempre que quiser, sem depender de e-mail</li>
+            <li data-icon="checkring" data-size="30"> Todos os seus devocionais em um só lugar</li>
+            <li data-icon="checkring" data-size="30"> Acompanhe seu progresso de leitura</li>
+            <li data-icon="checkring" data-size="30"> Continue de onde parou, em qualquer dispositivo</li>
+            <li data-icon="checkring" data-size="30"> Acesso sempre que quiser, sem depender de e-mail</li>
           </ul>
           <a class="btn btn--primary" href="biblioteca.html">Criar minha conta</a>
         </div>
@@ -129,6 +133,16 @@
       <ul class="grid grid--testimonials" id="testimonials-list"></ul>
     </section>
 
+    <!-- Perguntas frequentes -->
+    <section class="container section faq" id="faq" aria-labelledby="faq-titulo">
+      <div class="section-title">
+        <p class="eyebrow">Perguntas frequentes</p>
+        <h2 id="faq-titulo">O que você pode estar se perguntando</h2>
+        <span class="rule" aria-hidden="true"></span>
+      </div>
+      <div class="faq__list" id="faq-list"></div>
+    </section>
+
     <!-- Newsletter -->
     <section class="newsletter on-forest" aria-labelledby="newsletter">
       <div class="newsletter__inner">
@@ -147,9 +161,11 @@
 
   <div id="site-footer"></div>
 
-  <script src="js/data.js"></script>
-  <script src="js/components.js"></script>
-  <script src="js/main.js"></script>
-  <script type="module" src="js/home-catalog.js"></script>
+  <script src="js/data.js?v=202610151436"></script>
+  <script src="js/components.js?v=202610151436"></script>
+  <script src="js/main.js?v=202610151436"></script>
+  <script src="js/theme.js?v=202610151436"></script>
+  <script type="module" src="js/home-catalog.js?v=202610151436"></script>
+  <script type="module" src="js/versiculo-do-dia.js?v=202610151436"></script>
 </body>
 </html>

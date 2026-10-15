@@ -1,0 +1,58 @@
+{
+ "_comentario": "Datas especiais têm prioridade sobre a lista normal. 'fixas' usa MM-DD. 'moveis' usa regras: pascoa (calculada para qualquer ano) e domingo (n-ésimo domingo do mês). Deixe texto e versao vazios e preencha depois.",
+ "fixas": {
+  "01-01": {
+   "rotulo": "Ano-Novo",
+   "ref": "Lamentações 3:22-23",
+   "tema": "esperança",
+   "texto": "A benignidade do Senhor jamais acaba, as suas misericórdias não têm fim; renovam-se cada manhã. Grande é a tua fidelidade.",
+   "versao": "Almeida"
+  },
+  "12-25": {
+   "rotulo": "Natal",
+   "ref": "Lucas 2:11",
+   "tema": "alegria",
+   "texto": "É que vos nasceu hoje, na cidade de Davi, o Salvador, que é Cristo, o Senhor.",
+   "versao": "Almeida"
+  }
+ },
+ "moveis": [
+  {
+   "id": "pascoa",
+   "rotulo": "Páscoa",
+   "regra": {
+    "tipo": "pascoa"
+   },
+   "ref": "Mateus 28:6",
+   "tema": "ressurreição",
+   "texto": "Não está aqui, porque ressurgiu, como ele disse. Vinde, vede o lugar onde jazia;",
+   "versao": "Almeida"
+  },
+  {
+   "id": "dia-das-maes",
+   "rotulo": "Dia das Mães",
+   "regra": {
+    "tipo": "domingo",
+    "mes": 5,
+    "n": 2
+   },
+   "ref": "Provérbios 31:28",
+   "tema": "amor",
+   "texto": "Levantam-se seus filhos, e lhe chamam bem-aventurada, como também seu marido, que a louva, dizendo:",
+   "versao": "Almeida"
+  },
+  {
+   "id": "dia-dos-pais",
+   "rotulo": "Dia dos Pais",
+   "regra": {
+    "tipo": "domingo",
+    "mes": 8,
+    "n": 2
+   },
+   "ref": "Salmos 103:13",
+   "tema": "amor",
+   "texto": "Como um pai se compadece de seus filhos, assim o Senhor se compadece daqueles que o temem.",
+   "versao": "Almeida"
+  }
+ ]
+}

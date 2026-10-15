@@ -33,10 +33,26 @@
     cart += 1;
     $("#cart-count").textContent = cart;
     $(".cart").setAttribute("aria-label", `Carrinho, ${cart} itens`);
+
+    // Feedback no botão: "Adicionado" por um instante
+    const btn = e.target.closest("[data-add-to-cart]");
+    const label = btn.querySelector(".btn__label");
+    if (!label || btn.classList.contains("is-added")) return;
+    const original = label.innerHTML;
+    btn.classList.add("is-added");
+    btn.querySelector(".icon")?.replaceWith(Object.assign(document.createElement("span"), { innerHTML: icon("tick", 18) }).firstChild);
+    label.textContent = "Adicionado";
+    $(".cart")?.classList.add("bump");
+    setTimeout(() => $(".cart")?.classList.remove("bump"), 400);
+    setTimeout(() => {
+      btn.classList.remove("is-added");
+      btn.querySelector(".icon")?.replaceWith(Object.assign(document.createElement("span"), { innerHTML: icon("bag", 18) }).firstChild);
+      label.innerHTML = original;
+    }, 1600);
   });
 
   // ---- Home ----
-  const D = window.LIZIVIDA;
+  const D = window.INTIMA;
   const fill = (sel, html) => { const el = $(sel); if (el) el.innerHTML = html; };
 
   const verse = $("#verse-text");
@@ -47,7 +63,7 @@
 
   fill("#categories-list", D.categories.map((c) => `
     <li><a class="card category" href="devocionais.html?categoria=${c.slug}">
-      <span class="category__icon">${icon(c.icon, 26)}</span>
+      <span class="category__icon">${icon(c.icon, 34)}</span>
       <span class="category__name">${escapeHtml(c.name)}</span>
       <span class="muted">${escapeHtml(c.count)}</span>
     </a></li>`).join(""));
@@ -61,14 +77,6 @@
       <figcaption>${escapeHtml(t.name)}</figcaption>
     </figure></li>`).join(""));
 
-  const hero = $("#hero-covers");
-  if (hero) {
-    const [a, b, c] = D.ebooks;
-    hero.insertAdjacentHTML("beforeend",
-      `<div class="hero__cover hero__cover--left">${cover(b)}</div>
-       <div class="hero__cover hero__cover--right">${cover(c)}</div>
-       <div class="hero__cover hero__cover--front">${cover(a)}</div>`);
-  }
 
   const progress = [64, 28, 100];
   fill("#library-list", D.ebooks.slice(0, 3).map((e, i) => `
@@ -100,11 +108,44 @@
   }
 })();
 
-// Header: mostra "Minha conta" se houver sessão do Supabase salva (sem consultar a rede).
+// Header e menu: com sessão do Supabase salva, mostra o nome da pessoa (sem consultar a rede).
 (function () {
   try {
-    const logged = Object.keys(localStorage).some((k) => /^sb-.+-auth-token$/.test(k));
+    const chave = Object.keys(localStorage).find((k) => /^sb-.+-auth-token$/.test(k));
+    if (!chave) return;
+    const s = JSON.parse(localStorage.getItem(chave));
+    const u = s && (s.user || (s.currentSession && s.currentSession.user));
+    if (!u) return;
+
+    const meta = u.user_metadata || {};
+    const email = u.email || "";
+    const completo = String(meta.full_name || meta.name || "").trim() || email.split("@")[0] || "Minha conta";
+    const primeiro = completo.split(/\s+/)[0];
+    const inicial = primeiro.charAt(0).toUpperCase();
+    const esc = UI.escapeHtml;
+
+    // Cabeçalho (desktop mostra o nome; celular mostra só a inicial)
     const link = document.querySelector(".account-link");
-    if (logged && link) link.lastChild.textContent = " Minha conta";
-  } catch (_) { /* localStorage indisponível */ }
+    if (link) {
+      link.classList.add("is-logged");
+      link.setAttribute("aria-label", `Minha conta, ${completo}`);
+      link.setAttribute("title", completo);
+      link.innerHTML = `<span class="account-link__avatar" aria-hidden="true">${esc(inicial)}</span><span class="account-link__name">${esc(primeiro)}</span>`;
+    }
+
+    // Menu lateral (celular): cartão da pessoa + Minha conta + Sair
+    const entrar = document.querySelector(".drawer__panel > a.btn--gold");
+    if (entrar) {
+      const bloco = document.createElement("div");
+      bloco.className = "drawer__account";
+      bloco.innerHTML = `
+        <div class="drawer__user">
+          <span class="drawer__avatar" aria-hidden="true">${esc(inicial)}</span>
+          <span class="drawer__who"><strong>${esc(completo)}</strong>${email ? `<small>${esc(email)}</small>` : ""}</span>
+        </div>
+        <a class="btn btn--gold btn--block" href="biblioteca.html">Minha conta</a>
+        <a class="btn btn--block drawer__logout" href="biblioteca.html?sair=1">Sair</a>`;
+      entrar.replaceWith(bloco);
+    }
+  } catch (_) { /* localStorage indisponível ou sessão ilegível: mantém "Entrar" */ }
 })();

@@ -52,33 +52,56 @@ function translate(error) {
   return "Não foi possível concluir. Tente novamente.";
 }
 
+// Voltando de "Obter grátis" sem login: conclui a aquisição e abre o leitor.
+async function obterDaUrl() {
+  const id = new URLSearchParams(location.search).get("obter");
+  if (!id) return false;
+  const { error } = await supabase.rpc("obter_livro_gratis", { p_ebook_id: id });
+  if (error) {
+    $("#panel-error").textContent = "Não foi possível adicionar este ebook gratuito agora.";
+    return false;
+  }
+  location.replace(`ler.html?id=${encodeURIComponent(id)}`);
+  return true;
+}
+
 async function renderPanel(user) {
+  if (await obterDaUrl()) return;
   const name = user.user_metadata?.full_name;
   $("#panel-title").textContent = name ? `Olá, ${name.split(" ")[0]}` : "Olá!";
   $("#panel-email").textContent = user.email;
   show("panel");
 
-  const { data, error } = await supabase
-    .from("user_library")
-    .select("ebook_id, progress")
-    .order("created_at", { ascending: false });
+  // UMA chamada: biblioteca + dados dos livros (junção no banco)
+  let { data, error } = await supabase.rpc("minha_biblioteca");
+  if (error && ["PGRST202", "42883"].includes(error.code)) {
+    // função ainda não instalada: modo antigo (2 consultas)
+    const lib = await supabase.from("user_library").select("ebook_id, progress").order("created_at", { ascending: false }).limit(500);
+    error = lib.error;
+    data = lib.data || [];
+    const ids = data.map((x) => x.ebook_id);
+    if (!error && ids.length) {
+      const { data: rows } = await supabase.from("books").select("id,title,author,color,cover_url").in("id", ids);
+      const mapa = Object.fromEntries((rows || []).map((b) => [b.id, b]));
+      data = data.map((x) => ({ ...x, ...(mapa[x.ebook_id] ? { title: mapa[x.ebook_id].title, author: mapa[x.ebook_id].author, color: mapa[x.ebook_id].color, cover_url: mapa[x.ebook_id].cover_url } : {}) }));
+    }
+  }
 
   const list = $("#panel-library");
   if (error) {
     $("#panel-error").textContent =
-      "Não foi possível carregar sua biblioteca agora. Verifique se o esquema do banco foi criado.";
+      "Não foi possível carregar sua biblioteca agora. Tente novamente em instantes.";
     $("#panel-empty").hidden = false;
     return;
   }
 
-  const catalog = Object.fromEntries(LIZIVIDA.ebooks.map((e) => [e.id, e]));
-  const ids = (data || []).map((r) => r.ebook_id);
-  if (ids.length) {
-    const { data: rows } = await supabase.from("books").select("id,title,author,color,cover_url").in("id", ids);
-    (rows || []).forEach((b) => {
-      catalog[b.id] = { id: b.id, title: b.title, author: b.author || "", color: "forest", bg: b.color, cover: b.cover_url || "" };
-    });
-  }
+  const estaticos = Object.fromEntries(INTIMA.ebooks.map((e) => [e.id, e]));
+  const catalog = {};
+  (data || []).forEach((r) => {
+    catalog[r.ebook_id] = r.title
+      ? { id: r.ebook_id, title: r.title, author: r.author || "", color: "forest", bg: r.color, cover: r.cover_url || "" }
+      : estaticos[r.ebook_id];
+  });
   const items = (data || []).filter((r) => catalog[r.ebook_id]);
   $("#stat-total").textContent = items.length;
   $("#stat-done").textContent = items.filter((r) => r.progress >= 100).length;
@@ -92,8 +115,8 @@ async function renderPanel(user) {
         <p class="library-item__title">${esc(e.title)}</p>
         <p class="muted">${esc(e.author)}</p>
         <div class="progress-row">
-          <div class="progress" role="progressbar" aria-label="Progresso de leitura de ${esc(e.title)}" aria-valuenow="${r.progress}" aria-valuemin="0" aria-valuemax="100"><span style="width:${r.progress}%"></span></div>
-          <span class="progress-pct">${r.progress}%</span>
+          <div class="progress" role="progressbar" aria-label="Progresso de leitura de ${esc(e.title)}" aria-valuenow="${Number(r.progress) || 0}" aria-valuemin="0" aria-valuemax="100"><span style="width:${Number(r.progress) || 0}%"></span></div>
+          <span class="progress-pct">${Number(r.progress) || 0}%</span>
         </div>
       </div>
       <a class="btn btn--primary btn--sm" href="ler.html?id=${encodeURIComponent(r.ebook_id)}">${r.progress >= 100 ? "Reler" : "Continuar lendo"}</a>
@@ -138,6 +161,13 @@ async function init() {
     }
     renderPanel(res.data.user);
   });
+
+  // ?sair=1 (vindo do menu): encerra a sessão e volta para o início
+  if (new URLSearchParams(location.search).has("sair")) {
+    await supabase.auth.signOut();
+    location.replace("index.html");
+    return;
+  }
 
   const { data } = await supabase.auth.getSession();
   if (data.session) renderPanel(data.session.user);

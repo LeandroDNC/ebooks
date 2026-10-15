@@ -1,12 +1,12 @@
 // Página /devocionais: lista, filtro por categoria e busca.
-import { fetchPublished } from "./catalog.js";
+import { fetchPublished, ligarObterGratis } from "./catalog.js";
 
 const $ = (s) => document.querySelector(s);
 const params = new URLSearchParams(location.search);
 const catSlug = params.get("categoria") || "";
 const query = (params.get("q") || "").trim().toLowerCase();
 
-const cats = LIZIVIDA.categories;
+const cats = INTIMA.categories;
 const activeCat = cats.find((c) => c.slug === catSlug)?.name || "";
 
 function render(books) {
@@ -36,3 +36,5 @@ function renderChips() {
   $("#catalog-loading").hidden = true;
   render(books);
 })();
+
+ligarObterGratis();

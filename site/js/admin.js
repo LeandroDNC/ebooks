@@ -1,12 +1,12 @@
-// Editor de ebooks — LIZIVIDA admin.
-// Rascunhos: localStorage. Publicação: tabelas books / book_content + buckets (ver supabase/schema.sql).
+// Editor de ebooks — Íntima Graça admin.
+// Rascunhos: localStorage. Publicação: tabelas books / book_content (esquema em supabase/schema.sql, fora da pasta pública).
 import { supabase } from "./supabase.js";
 import { FONTS, esc, renderPage, renderCover, buildSequence, FlipBook, coverStyle, coverAutoColor } from "./book-render.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const uid = (p = "b") => p + Math.random().toString(36).slice(2, 9);
-const DRAFTS_KEY = "lizivida:drafts";
+const DRAFTS_KEY = "intimagraca:drafts";
 // Mesmas categorias da loja (js/data.js). Para criar outra, adicione aqui e em data.js.
 const CATEGORIES = ["Mulheres", "Casais", "Jovens", "Família", "Jornadas de 21/30 dias", "Oração"];
 const SWATCHES = ["#344E41", "#1F3329", "#A3B18A", "#C6A667", "#F8F6F0", "#FFFFFF", "#000000", "#8A2C1F", "#2F5D8A", "#6B4F7A"];
@@ -239,7 +239,7 @@ function renderInspector() {
   const b = findBlock(selected);
   if (onCover && !b) {
     box.innerHTML = `<h2>Capa</h2><div class="empty-ins">Toque no <b>título</b>, na <b>autoria</b> ou na <b>imagem</b> dentro da capa para mudar fonte, cor e tamanho.</div>
-      <p class="muted" style="margin-top:1rem">Cor de fundo, foto e imagem da capa ficam em “Livro → Capa”. A logo da LIZIVIDA aparece em todas as páginas.</p>`;
+      <p class="muted" style="margin-top:1rem">Cor de fundo, foto e imagem da capa ficam em “Livro”, na seção Capa. A logo da Íntima Graça aparece em todas as páginas.</p>`;
     return;
   }
 
@@ -252,8 +252,8 @@ function renderInspector() {
   if (!b) {
     html += `<div class="empty-ins">Toque em um título, texto ou foto da página para editar, ou adicione um novo elemento.</div>
       <div class="rowbtns">
-        <button type="button" class="btn btn--ghost btn--sm" data-act="page-up">← Mover para trás</button>
-        <button type="button" class="btn btn--ghost btn--sm" data-act="page-down">Mover para frente →</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-act="page-up"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg> Mover para trás</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-act="page-down">Mover para frente <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
         <button type="button" class="btn btn--ghost btn--sm" data-act="page-dup">Duplicar página</button>
         <button type="button" class="btn btn--ghost btn--sm btn--danger" data-act="page-del">Excluir página</button>
       </div>`;
@@ -272,10 +272,10 @@ function renderInspector() {
       <label class="check"><input id="a-recolor" type="checkbox"${rc ? " checked" : ""}> Pintar com uma cor</label>
       ${rc ? `<div class="field"><label for="a-color">Cor da imagem</label>
         <div class="colorrow"><input id="a-color" type="color" value="${esc(b.color || "#C6A667")}"><div class="swatches" data-swatch-for="a-color"></div></div></div>` : `<p class="muted">Usando as cores originais do arquivo.</p>`}
-      <div class="field"><label for="a-size">Tamanho: <span id="a-size-v">${b.size}</span>%</label>
-        <input id="a-size" type="range" min="10" max="100" step="1" value="${b.size}"></div>
-      <div class="field"><label for="a-x">Posição horizontal</label><input id="a-x" type="range" min="0" max="100" step="1" value="${b.x}"></div>
-      <div class="field"><label for="a-y">Posição vertical</label><input id="a-y" type="range" min="0" max="100" step="1" value="${b.y}"></div>
+      <div class="field"><label for="a-size">Tamanho: <span id="a-size-v">${Number(b.size) || 0}</span>%</label>
+        <input id="a-size" type="range" min="10" max="100" step="1" value="${Number(b.size) || 0}"></div>
+      <div class="field"><label for="a-x">Posição horizontal</label><input id="a-x" type="range" min="0" max="100" step="1" value="${Number(b.x) || 0}"></div>
+      <div class="field"><label for="a-y">Posição vertical</label><input id="a-y" type="range" min="0" max="100" step="1" value="${Number(b.y) || 0}"></div>
       <p class="muted">Dica: arraste a imagem direto na capa.</p>`;
   } else if (b.type === "line") {
     html += `
@@ -285,10 +285,10 @@ function renderInspector() {
       </div>
       <div class="field"><label for="l-color">Cor da linha</label>
         <div class="colorrow"><input id="l-color" type="color" value="${esc(b.color)}"><div class="swatches" data-swatch-for="l-color"></div></div></div>
-      <div class="field"><label for="l-th">Espessura: <span id="l-th-v">${b.thickness}</span>px</label>
-        <input id="l-th" type="range" min="1" max="12" step="1" value="${b.thickness}"></div>
-      <div class="field"><label for="l-w">Comprimento: <span id="l-w-v">${b.width}</span>%</label>
-        <input id="l-w" type="range" min="10" max="100" step="5" value="${b.width}"></div>
+      <div class="field"><label for="l-th">Espessura: <span id="l-th-v">${Number(b.thickness) || 0}</span>px</label>
+        <input id="l-th" type="range" min="1" max="12" step="1" value="${Number(b.thickness) || 0}"></div>
+      <div class="field"><label for="l-w">Comprimento: <span id="l-w-v">${Number(b.width) || 0}</span>%</label>
+        <input id="l-w" type="range" min="10" max="100" step="5" value="${Number(b.width) || 0}"></div>
       <div class="seg" role="group" aria-label="Alinhamento">
         ${[["left", "Esq."], ["center", "Centro"], ["right", "Dir."]]
           .map(([v, l]) => `<button type="button" data-align="${v}" aria-pressed="${pressed(v === b.align)}">${l}</button>`).join("")}
@@ -300,8 +300,8 @@ function renderInspector() {
       <div class="fontgrid" role="group" aria-labelledby="fonts-label">
         ${FONTS.map((f) => `<button type="button" data-font="${esc(f.name)}" aria-pressed="${pressed(f.name === b.font)}" style="font-family:${f.css}">${esc(f.name.split(" ")[0])}</button>`).join("")}
       </div>
-      <div class="field"><label for="b-size">Tamanho: <span id="b-size-v">${b.size}</span></label>
-        <input id="b-size" type="range" min="1.5" max="24" step="0.5" value="${b.size}"></div>
+      <div class="field"><label for="b-size">Tamanho: <span id="b-size-v">${Number(b.size) || 0}</span></label>
+        <input id="b-size" type="range" min="1.5" max="24" step="0.5" value="${Number(b.size) || 0}"></div>
       <div class="field"><label for="b-color">Cor do texto</label>
         <div class="colorrow"><input id="b-color" type="color" value="${esc(b.color)}"><div class="swatches" data-swatch-for="b-color"></div></div></div>
       <div class="seg" role="group" aria-label="Estilo">
@@ -316,10 +316,10 @@ function renderInspector() {
   } else {
     html += `
       <div class="field"><label for="b-url">Link da imagem</label><input id="b-url" type="url" inputmode="url" placeholder="https://…/foto.jpg" autocomplete="off" value="${esc(b.src || "")}"></div>
-      <div class="field"><label for="b-width">Largura: <span id="b-width-v">${b.width}</span>%</label>
-        <input id="b-width" type="range" min="20" max="100" step="5" value="${b.width}"></div>
-      <div class="field"><label for="b-radius">Cantos arredondados: <span id="b-radius-v">${b.radius}</span>px</label>
-        <input id="b-radius" type="range" min="0" max="60" step="2" value="${b.radius}"></div>
+      <div class="field"><label for="b-width">Largura: <span id="b-width-v">${Number(b.width) || 0}</span>%</label>
+        <input id="b-width" type="range" min="20" max="100" step="5" value="${Number(b.width) || 0}"></div>
+      <div class="field"><label for="b-radius">Cantos arredondados: <span id="b-radius-v">${Number(b.radius) || 0}</span>px</label>
+        <input id="b-radius" type="range" min="0" max="60" step="2" value="${Number(b.radius) || 0}"></div>
       <div class="seg" role="group" aria-label="Alinhamento">
         ${[["left", "Esq."], ["center", "Centro"], ["right", "Dir."]]
           .map(([v, l]) => `<button type="button" data-align="${v}" aria-pressed="${pressed(v === b.align)}">${l}</button>`).join("")}
@@ -936,7 +936,7 @@ async function gate() {
     const { data: s } = await supabase.auth.getSession();
     if (!s.session) return false;
     const { data: ok, error } = await supabase.rpc("is_admin");
-    if (error) { msg.textContent = "Execute o SQL do admin em supabase/schema.sql e tente de novo."; return false; }
+    if (error) { msg.textContent = "Não foi possível validar o acesso. Tente novamente em instantes."; return false; }
     if (!ok) { msg.textContent = "Esta conta não é a administradora."; await supabase.auth.signOut(); return false; }
     return true;
   };
