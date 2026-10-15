@@ -20,7 +20,7 @@
 
     var t = localStorage.getItem("intimagraca:tema");
     if (t !== "dark" && t !== "light") {
-      t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      t = "light"; // padrão: tema claro; o escuro só vale se a pessoa escolher
     }
     document.documentElement.setAttribute("data-theme", t);
   } catch (e) { /* sem storage */ }
