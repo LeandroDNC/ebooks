@@ -57,7 +57,7 @@ Em qualquer página com o componente, acrescente à URL:
 - `?dia=N` (de 1 a 366): simula o dia do ano.
 - `?data=MM-DD`: simula uma data, por exemplo `?data=12-25`.
 
-A página `exemplo-versiculo.html` traz atalhos para esses testes.
+A página `?dia=N` ou `?data=MM-DD` na home permitem testar outras datas.
 
 ## Marca e endereço no compartilhamento
 

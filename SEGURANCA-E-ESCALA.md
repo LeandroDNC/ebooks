@@ -6,7 +6,7 @@ Este documento resume o que foi feito no projeto e o que ainda depende do painel
 
 - **Publique somente a pasta `site/`** (ela é a raiz do site).
 - Ficam **fora** da pasta pública: `supabase/schema.sql` (esquema e políticas do banco) e `.env.example`.
-- `site/_headers` (Netlify, Cloudflare Pages) e `site/vercel.json` (Vercel) aplicam os cabeçalhos de segurança em produção.
+- `site/_headers` (Cloudflare Pages / Netlify) aplica os cabeçalhos de segurança em produção.
 
 ## 2. Banco de dados: o que foi feito para aguentar muitos usuários
 
