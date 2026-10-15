@@ -852,8 +852,85 @@ async function openBook(id) {
   renderAll();
 }
 
+/* ------------------------------------------------------ importar ebook (.json) */
+// Aceita o arquivo da skill criar_ebook ou o backup baixado pelo próprio editor.
+// Tudo é revalidado: campos desconhecidos são descartados e os ids são recriados.
+const RE_COR_IMP = /^#[0-9a-fA-F]{3,8}$/;
+const ALIGNS = ["left", "center", "right", "justify"];
+const num = (v, lo, hi, d) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
+const txt = (v, max) => String(v ?? "").slice(0, max);
+const corImp = (v, d) => (typeof v === "string" && RE_COR_IMP.test(v.trim()) ? v.trim() : d);
+const linkImp = (v) => (typeof v === "string" && /^https?:\/\/[^\s"'<>]{1,2000}$/i.test(v.trim()) ? v.trim() : null);
+const fontImp = (v) => (FONTS.some((f) => f.name === v) ? v : "Manrope");
+
+function normalizarImport(raw) {
+  if (!raw || typeof raw !== "object" || !Array.isArray(raw.pages)) throw new Error("Arquivo sem páginas. Use um arquivo gerado pela skill criar_ebook.");
+  if (raw.pages.length > 200) throw new Error("Muitas páginas (limite 200).");
+  const b = newBook();
+  b.title = txt(raw.title, 120);
+  b.author = txt(raw.author, 80);
+  b.category = CATEGORIES.includes(raw.category) ? raw.category : "";
+  const preco = raw.price === "" || raw.price == null ? "" : num(raw.price, 0, 9999, "");
+  b.price = preco;
+  b.coverColor = corImp(raw.coverColor, "#344E41");
+  b.coverImage = linkImp(raw.coverImage);
+  b.year = num(raw.year, 1900, 2200, new Date().getFullYear());
+  b.holder = txt(raw.holder, 120);
+  b.isbn = txt(raw.isbn, 30);
+  b.creditsText = txt(raw.creditsText, 600);
+  b.creditsPosition = raw.creditsPosition === "back" ? "back" : "front";
+  b.published = false;
+  if (raw.coverStyles && typeof raw.coverStyles === "object") {
+    b.coverStyles = {};
+    ["cover-title", "cover-author"].forEach((k) => {
+      const s = raw.coverStyles[k];
+      if (!s || typeof s !== "object") return;
+      b.coverStyles[k] = { font: fontImp(s.font), size: num(s.size, 2, 20, 8), ...(corImp(s.color, "") ? { color: corImp(s.color, "") } : {}),
+        bold: !!s.bold, italic: !!s.italic, align: ALIGNS.includes(s.align) ? s.align : "center" };
+    });
+  }
+  b.pages = raw.pages.map((p) => {
+    const pg = newPage(corImp(p && p.bg, "#FFFFFF"));
+    pg.blocks = (Array.isArray(p && p.blocks) ? p.blocks : []).slice(0, 40).map((k) => {
+      if (!k || typeof k !== "object") return null;
+      if (k.type === "text") {
+        return textBlock({ text: txt(k.text, 6000), font: fontImp(k.font), size: num(k.size, 2, 20, 4), color: corImp(k.color, "#344E41"),
+          bold: !!k.bold, italic: !!k.italic, underline: !!k.underline, align: ALIGNS.includes(k.align) ? k.align : "left" });
+      }
+      if (k.type === "line") {
+        return lineBlock({ style: LINE_STYLES.some(([v]) => v === k.style) ? k.style : "solid", color: corImp(k.color, "#C6A667"),
+          thickness: num(k.thickness, 1, 8, 2), width: num(k.width, 5, 100, 60), align: ALIGNS.includes(k.align) ? k.align : "center" });
+      }
+      if (k.type === "image") {
+        return imageBlock({ src: linkImp(k.src) || "", alt: txt(k.alt, 200), width: num(k.width, 10, 100, 100), radius: num(k.radius, 0, 60, 0),
+          align: ALIGNS.includes(k.align) ? k.align : "center" });
+      }
+      return null;
+    }).filter(Boolean);
+    return pg;
+  });
+  if (!b.pages.length) b.pages = [newPage()];
+  return b;
+}
+
+async function importarArquivo(file) {
+  if (!file) return;
+  try {
+    if (file.size > 2 * 1024 * 1024) throw new Error("Arquivo grande demais (máximo 2 MB).");
+    const novo = normalizarImport(JSON.parse(await file.text()));
+    book = novo; pageIdx = 0; selected = null; undo = []; redo = [];
+    pushHistory(); renderAll(); persist();
+    toast(`Importado: ${novo.title || "ebook sem título"} (${novo.pages.length} páginas)`);
+  } catch (e) {
+    toast(e instanceof SyntaxError ? "Arquivo inválido: não é um JSON." : e.message, true);
+  }
+}
+
 /* ------------------------------------------------------------ inicialização */
 function bindBar() {
+  $("#btn-import").addEventListener("click", () => $("#file-import").click());
+  $("#file-import").addEventListener("change", (e) => { importarArquivo(e.target.files[0]); e.target.value = ""; });
+
   $("#book-select").addEventListener("change", (e) => openBook(e.target.value));
 
   const more = $("#menu-more");
@@ -866,6 +943,32 @@ function bindBar() {
     pushHistory(); renderAll(); persist();
     if (!isDesktop()) openSheet("sheet-book");
   });
+  // Descartar: apaga o rascunho deste navegador. O que já está publicado no banco não é apagado.
+  const descartar = async () => {
+    const noBanco = remoteIds.has(book.id);
+    const nome = book.title || "este ebook";
+    const aviso = noBanco
+      ? `Descartar todas as alterações de “${nome}” feitas neste navegador? A versão salva no banco continua intacta.`
+      : `Descartar “${nome}” por completo? O rascunho será apagado e não poderá ser recuperado.`;
+    if (!confirm(aviso)) return;
+    const id = book.id;
+    try {
+      const all = readDrafts();
+      delete all[id];
+      localStorage.setItem(DRAFTS_KEY, JSON.stringify(all));
+    } catch { /* sem armazenamento: segue sem rascunho */ }
+    clearTimeout(saveTimer);
+    selected = null; pageIdx = 0; undo = []; redo = [];
+    if (noBanco) book = (await loadRemote(id)) || newBook();
+    else {
+      const resto = Object.keys(readDrafts());
+      book = resto.length ? readDrafts()[resto[0]] : newBook();
+    }
+    pushHistory(); renderAll(); persist();
+    toast(noBanco ? "Alterações descartadas." : "Ebook descartado.");
+  };
+  $("#btn-discard").addEventListener("click", descartar);
+  $("#btn-discard-menu").addEventListener("click", descartar);
   $("#btn-undo").addEventListener("click", doUndo);
   $("#btn-redo").addEventListener("click", doRedo);
   $("#btn-preview").addEventListener("click", openPreview);

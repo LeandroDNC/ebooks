@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Lora:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,700;1,400&family=Parisienne&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="assets/logo-intima-graca.svg">
   <link rel="stylesheet" href="css/styles.css?v=202610151436">
-  <link rel="stylesheet" href="css/admin.css?v=202610151800">
+  <link rel="stylesheet" href="css/admin.css?v=202610152000">
 </head>
 <body class="admin">
   <!-- Acesso -->
@@ -63,7 +63,10 @@
         </button>
         <div id="menu-more" class="menu" hidden>
           <button type="button" id="btn-new">Novo ebook</button>
+          <button type="button" id="btn-import">Importar ebook (.json)</button>
+          <input id="file-import" type="file" accept=".json,application/json" hidden>
           <button type="button" id="btn-export">Baixar backup (.json)</button>
+          <button type="button" id="btn-discard-menu" class="is-danger">Descartar ebook</button>
           <button type="button" id="btn-logout">Sair</button>
         </div>
       </div>
@@ -113,6 +116,7 @@
               <select id="f-credpos"><option value="front">No começo (depois da capa)</option><option value="back">No final do ebook</option></select>
             </div>
           </details>
+          <button type="button" class="btn-discard" id="btn-discard">Descartar ebook</button>
         </div>
       </aside>
 
@@ -180,6 +184,6 @@
   </div>
 
   <div id="toasts" class="toasts" aria-live="polite"></div>
-  <script type="module" src="js/admin.js?v=202610151436"></script>
+  <script type="module" src="js/admin.js?v=202610152000"></script>
 </body>
 </html>

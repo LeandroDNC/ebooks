@@ -253,3 +253,9 @@ svg:not(.icon) { width: 20px; height: 20px; fill: none; stroke: currentColor; st
   #save-status { margin-left: auto; }
   #btn-painel { padding-inline: 0.75rem; }
 }
+
+/* descartar ebook */
+.btn-discard { width: 100%; min-height: 44px; margin-top: 0.75rem; border: 1px solid rgba(138, 44, 31, 0.45); border-radius: 12px; background: transparent; color: #8a2c1f; font-weight: 700; cursor: pointer; }
+.btn-discard:hover { background: rgba(138, 44, 31, 0.08); }
+.menu button.is-danger { color: #8a2c1f; }
+.menu button.is-danger:hover { background: rgba(138, 44, 31, 0.1); }

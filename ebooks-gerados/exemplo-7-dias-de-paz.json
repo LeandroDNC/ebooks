@@ -1,0 +1,6 @@
+{"title":"7 dias de paz","author":"Íntima Graça","category":"Jornadas de 21/30 dias","price":0,"coverColor":"#344E41","year":2026,"holder":"Íntima Graça",
+"coverStyles":{"cover-title":{"font":"Cormorant Garamond","size":9,"bold":true,"align":"center","color":"#F8F6F0"},"cover-author":{"font":"Manrope","size":3.6,"align":"center","color":"#C6A667"}},
+"pages":[
+{"bg":"#F8F6F0","blocks":[{"type":"text","text":"Dia 1","font":"Cormorant Garamond","size":8,"bold":true,"align":"center"},{"type":"line","style":"ornament","width":40},{"type":"text","text":"“Deixo-vos a paz, a minha paz vos dou.”\nJoão 14:27","font":"Cormorant Garamond","size":6.5,"italic":true,"align":"center"},{"type":"text","text":"Respire fundo. A paz de Deus não depende das circunstâncias; ela é um presente para hoje.","size":4,"align":"left"}]},
+{"bg":"#FFFFFF","blocks":[{"type":"text","text":"Oração","font":"Cormorant Garamond","size":8,"bold":true,"align":"center"},{"type":"text","text":"Senhor, aquieta o meu coração e me ensina a descansar em ti. Amém.","size":4,"align":"center","italic":true}]}
+]}

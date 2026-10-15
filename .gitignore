@@ -1,0 +1,29 @@
+# segredos: nunca versionar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+service-account*.json
+secrets/
+
+# dependências e builds
+node_modules/
+.next/
+dist/
+.vercel/
+
+# editor / sistema
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# configurações locais do Claude Code (podem conter permissões e caminhos locais)
+.claude/settings.local.json
+.claude/launch.json
+
+# rascunhos locais
+tmp-*
+*.log
