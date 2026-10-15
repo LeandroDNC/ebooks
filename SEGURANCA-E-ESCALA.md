@@ -66,3 +66,8 @@ Compatibilidade: se o SQL novo ainda não foi aplicado, o site continua funciona
 
 ## 4. Nome da marca
 Todas as ocorrências de "LIZIVIDA" viraram **Íntima Graça**: títulos, textos, logo (`assets/logo-intima-graca.svg`), páginas legais, esquema do banco, chaves de armazenamento (`intimagraca:*`, com migração automática das antigas).
+
+## Painel do administrador
+- `admin.html` = painel (indicadores e graficos); `admin-ebook.html` = editor. Rode `supabase/schema.sql` de novo: cria `books.published_at`, a tabela `orders` (so o servidor grava, via webhook de pagamento com chave de servico) e a funcao `admin_dashboard()` (so a administradora executa).
+- Sem a tabela `orders` alimentada, vendas e receita aparecem zeradas; o ranking usa os ebooks mais obtidos gratis.
+

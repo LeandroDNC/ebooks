@@ -243,3 +243,13 @@ svg:not(.icon) { width: 20px; height: 20px; fill: none; stroke: currentColor; st
 .bk-book[data-last="true"]::after { opacity: 0; }
 .bk-book::before { content: ""; position: absolute; left: 6%; right: -3%; bottom: -16px; height: 22px; background: radial-gradient(closest-side, rgba(31, 51, 41, 0.38), rgba(31, 51, 41, 0)); filter: blur(5px); pointer-events: none; }
 .btn svg:not(.icon) { width: 18px; height: 18px; }
+
+/* barra do editor em telas estreitas: o seletor de ebook não pode ser esmagado */
+.tb-book { min-width: 8rem; }
+.tb select { text-overflow: ellipsis; }
+@media (max-width: 640px) {
+  .tb { flex-wrap: wrap; row-gap: 0.25rem; }
+  .tb-book { order: 5; flex: 1 1 100%; }
+  #save-status { margin-left: auto; }
+  #btn-painel { padding-inline: 0.75rem; }
+}

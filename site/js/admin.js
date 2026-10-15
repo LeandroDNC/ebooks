@@ -913,8 +913,13 @@ async function startApp() {
     remoteIds = new Set((data || []).map((r) => r.id));
   }
   const drafts = readDrafts();
+  const q = new URLSearchParams(location.search);
   const first = Object.keys(drafts)[0];
-  book = first ? drafts[first] : newBook();
+  const idUrl = q.get("id");
+  if (q.has("novo")) book = newBook();                       // vindo do botão "Novo ebook" do painel
+  else if (idUrl && drafts[idUrl]) book = drafts[idUrl];     // rascunho local
+  else if (idUrl && remoteIds.has(idUrl)) book = (await loadRemote(idUrl)) || newBook();
+  else book = first ? drafts[first] : newBook();
   bindSettings();
   bindCanvas();
   bindInspector();

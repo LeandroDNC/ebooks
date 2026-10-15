@@ -387,3 +387,127 @@ grant execute on function public.obter_livro_gratis(text) to authenticated;
 alter table public.user_library drop constraint if exists user_library_progress_check;
 alter table public.user_library add constraint user_library_progress_check
   check (progress between 0 and 100);
+
+
+-- =====================================================================
+-- PAINEL DO ADMINISTRADOR (dashboard): publicação, vendas e indicadores
+-- Pode ser executado várias vezes.
+-- =====================================================================
+
+-- 1) Data de publicação (para "publicados no mês")
+alter table public.books add column if not exists published_at timestamptz;
+update public.books set published_at = coalesce(published_at, updated_at)
+where published and published_at is null;
+
+create or replace function public.books_set_published_at()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if new.published then
+    if tg_op = 'INSERT' or old.published is distinct from true or new.published_at is null then
+      new.published_at := coalesce(new.published_at, now());
+    end if;
+  else
+    new.published_at := null;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists books_published_at on public.books;
+create trigger books_published_at before insert or update on public.books
+  for each row execute function public.books_set_published_at();
+
+create index if not exists books_created_idx on public.books (created_at);
+create index if not exists books_published_at_idx on public.books (published_at) where published;
+
+-- 2) Vendas. Só o servidor grava (webhook do pagamento, com a chave de serviço).
+create table if not exists public.orders (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid references auth.users (id) on delete set null,
+  ebook_id   text not null references public.books (id) on delete restrict,
+  amount     numeric(10,2) not null check (amount >= 0),
+  status     text not null default 'paid' check (status in ('pending', 'paid', 'refunded')),
+  created_at timestamptz not null default now()
+);
+alter table public.orders enable row level security;
+revoke all on table public.orders from anon, authenticated;
+create index if not exists orders_paid_data_idx on public.orders (created_at desc) where status = 'paid';
+create index if not exists orders_paid_ebook_idx on public.orders (ebook_id) where status = 'paid';
+
+-- 3) Indicadores do painel em UMA chamada (somente administradora)
+create or replace function public.admin_dashboard()
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  tz       constant text := 'America/Fortaleza';
+  v_local  timestamp := date_trunc('month', timezone(tz, now()));
+  v_mes    timestamptz := timezone(tz, v_local);
+  v_prox   timestamptz := timezone(tz, v_local + interval '1 month');
+  r        jsonb;
+begin
+  if not (select public.is_admin()) then
+    raise exception 'Acesso negado.' using errcode = '42501';
+  end if;
+
+  select jsonb_build_object(
+    'totais', jsonb_build_object(
+      'ebooks',         (select count(*) from public.books),
+      'publicados',     (select count(*) from public.books where published),
+      'rascunhos',      (select count(*) from public.books where not published),
+      'gratuitos',      (select count(*) from public.books where published and (price is null or price = 0)),
+      'criados_mes',    (select count(*) from public.books where created_at >= v_mes and created_at < v_prox),
+      'publicados_mes', (select count(*) from public.books where published and published_at >= v_mes and published_at < v_prox),
+      'vendidos_total', (select count(*) from public.orders where status = 'paid'),
+      'vendidos_mes',   (select count(*) from public.orders where status = 'paid' and created_at >= v_mes and created_at < v_prox),
+      'receita_total',  (select coalesce(sum(amount), 0) from public.orders where status = 'paid'),
+      'receita_mes',    (select coalesce(sum(amount), 0) from public.orders where status = 'paid' and created_at >= v_mes and created_at < v_prox),
+      'gratis_total',   (select count(*) from public.user_library ul join public.books b on b.id = ul.ebook_id where b.price is null or b.price = 0),
+      'gratis_mes',     (select count(*) from public.user_library ul join public.books b on b.id = ul.ebook_id
+                         where (b.price is null or b.price = 0) and ul.created_at >= v_mes and ul.created_at < v_prox)
+    ),
+    'meses', (
+      select jsonb_agg(jsonb_build_object(
+        'mes', to_char(g.m, 'YYYY-MM'),
+        'criados',    (select count(*) from public.books b where b.created_at >= timezone(tz, g.m) and b.created_at < timezone(tz, g.m + interval '1 month')),
+        'publicados', (select count(*) from public.books b where b.published and b.published_at >= timezone(tz, g.m) and b.published_at < timezone(tz, g.m + interval '1 month')),
+        'vendidos',   (select count(*) from public.orders o where o.status = 'paid' and o.created_at >= timezone(tz, g.m) and o.created_at < timezone(tz, g.m + interval '1 month')),
+        'receita',    (select coalesce(sum(o.amount), 0) from public.orders o where o.status = 'paid' and o.created_at >= timezone(tz, g.m) and o.created_at < timezone(tz, g.m + interval '1 month')),
+        'gratis',     (select count(*) from public.user_library ul join public.books b on b.id = ul.ebook_id
+                       where (b.price is null or b.price = 0) and ul.created_at >= timezone(tz, g.m) and ul.created_at < timezone(tz, g.m + interval '1 month'))
+      ) order by g.m)
+      from generate_series(v_local - interval '5 months', v_local, interval '1 month') as g(m)
+    ),
+    'top', (
+      select coalesce(jsonb_agg(t order by t.vendidos desc, t.receita desc), '[]'::jsonb) from (
+        select b.id, b.title, b.author, b.color, b.cover_url, count(*) as vendidos, sum(o.amount) as receita
+        from public.orders o join public.books b on b.id = o.ebook_id
+        where o.status = 'paid'
+        group by b.id, b.title, b.author, b.color, b.cover_url
+        order by count(*) desc, sum(o.amount) desc
+        limit 5
+      ) t
+    ),
+    'top_gratis', (
+      select coalesce(jsonb_agg(t order by t.vendidos desc), '[]'::jsonb) from (
+        select b.id, b.title, b.author, b.color, b.cover_url, count(*) as vendidos, 0 as receita
+        from public.user_library ul join public.books b on b.id = ul.ebook_id
+        where b.price is null or b.price = 0
+        group by b.id, b.title, b.author, b.color, b.cover_url
+        order by count(*) desc
+        limit 5
+      ) t
+    )
+  ) into r;
+
+  return r;
+end;
+$$;
+revoke all on function public.admin_dashboard() from public, anon;
+grant execute on function public.admin_dashboard() to authenticated;

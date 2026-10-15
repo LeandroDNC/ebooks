@@ -38,7 +38,7 @@
       ]
     },
     {
-      "source": "/(admin|ler|biblioteca).html",
+      "source": "/(admin|admin-ebook|admin-ebooks|ler|biblioteca).html",
       "headers": [
         {
           "key": "Cache-Control",
@@ -47,7 +47,7 @@
       ]
     },
     {
-      "source": "/(admin).html",
+      "source": "/(admin|admin-ebook|admin-ebooks).html",
       "headers": [
         {
           "key": "X-Robots-Tag",

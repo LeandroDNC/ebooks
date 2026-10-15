@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://sezaazpoybpqnhayzgkk.supabase.co wss://sezaazpoybpqnhayzgkk.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#344E41">
+  <title>Editor de ebooks | Íntima Graça</title>
+  <script src="js/tema-inicial.js?v=202610151436"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Lora:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Montserrat:ital,wght@0,400;0,700;1,400&family=Parisienne&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-intima-graca.svg">
+  <link rel="stylesheet" href="css/styles.css?v=202610151436">
+  <link rel="stylesheet" href="css/admin.css?v=202610151800">
+</head>
+<body class="admin">
+  <!-- Acesso -->
+  <main id="gate" class="gate">
+    <div class="auth card">
+      <img class="logo-img" src="assets/logo-intima-graca.svg" alt="Íntima Graça" width="138" height="52">
+      <h1>Área do administrador</h1>
+      <span class="rule" aria-hidden="true"></span>
+      <form id="gate-form" novalidate>
+        <div class="field"><label for="g-email">E-mail</label><input id="g-email" type="email" required autocomplete="email"></div>
+        <div class="field"><label for="g-pass">Senha</label><input id="g-pass" type="password" required autocomplete="current-password"></div>
+        <button class="btn btn--primary btn--block" type="submit">Entrar</button>
+        <p id="gate-msg" class="form-message" role="status"></p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Editor -->
+  <div id="app" hidden>
+    <header class="tb">
+      <a class="tb-logo" href="admin.html" aria-label="Íntima Graça — painel"><img src="assets/logo-intima-graca.svg" alt="Íntima Graça" width="85" height="32"></a>
+
+      <a class="btn btn--ghost btn--sm" id="btn-painel" href="admin.html" aria-label="Voltar ao painel">Painel</a>
+      <div class="tb-book">
+        <label class="sr-only" for="book-select">Ebook em edição</label>
+        <select id="book-select"></select>
+      </div>
+
+      <div class="tb-group">
+        <button class="ib" id="btn-undo" type="button" aria-label="Desfazer (Ctrl+Z)" title="Desfazer" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>
+        </button>
+        <button class="ib" id="btn-redo" type="button" aria-label="Refazer (Ctrl+Y)" title="Refazer" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg>
+        </button>
+        <button class="ib" id="btn-preview" type="button" aria-label="Visualizar como livro" title="Visualizar como livro">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+
+      <span id="save-status" class="state" role="status" data-state="idle"><i aria-hidden="true"></i><span>Pronto</span></span>
+
+      <div class="tb-more">
+        <button class="ib ib--dark" id="btn-more" type="button" aria-label="Mais ações" aria-expanded="false" aria-controls="menu-more">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>
+        </button>
+        <div id="menu-more" class="menu" hidden>
+          <button type="button" id="btn-new">Novo ebook</button>
+          <button type="button" id="btn-export">Baixar backup (.json)</button>
+          <button type="button" id="btn-logout">Sair</button>
+        </div>
+      </div>
+
+      <div class="tb-actions">
+        <button class="btn btn--secondary btn--sm" id="btn-save" type="button">Salvar</button>
+        <button class="btn btn--gold btn--sm" id="btn-publish" type="button">Publicar</button>
+      </div>
+    </header>
+
+    <div id="sheet-bg" class="sheet-bg" hidden></div>
+
+    <div class="ad-grid">
+      <!-- Livro -->
+      <aside class="ad-left sheet" id="sheet-book" aria-label="Dados do livro">
+        <div class="sheet-head"><span>Dados do livro</span><button type="button" class="ib" data-close-sheet aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <div class="sheet-body">
+          <details class="ad-box" open>
+            <summary>Informações</summary>
+            <div class="field"><label for="f-title">Título</label><input id="f-title" maxlength="200" type="text" placeholder="Ex.: Café com Deus"></div>
+            <div class="field"><label for="f-author">Autoria</label><input id="f-author" maxlength="200" type="text"></div>
+            <div class="field"><label for="f-category">Categoria <em>(obrigatória para publicar)</em></label><select id="f-category"></select></div>
+            <div class="field"><label for="f-price">Preço (R$) <em>(vazio = Free)</em></label><input id="f-price" type="number" min="0" step="0.01" inputmode="decimal"></div>
+          </details>
+          <details class="ad-box">
+            <summary>Capa</summary>
+            <div class="field"><label for="f-color">Cor da capa</label>
+              <div class="colorrow"><input id="f-color" type="color"><div class="swatches" data-swatch-for="f-color"></div></div>
+            </div>
+            <div class="field"><label for="f-cover">Foto da capa (link)</label><input id="f-cover" type="url" inputmode="url" placeholder="https://…/foto.jpg" autocomplete="off"></div>
+            <button class="btn btn--ghost btn--sm" id="btn-cover-clear" type="button">Remover foto da capa</button>
+            <hr class="sep">
+            <div class="field"><label for="f-art">Imagem sobre a capa (link SVG ou PNG)</label><input id="f-art" type="url" inputmode="url" placeholder="https://…/ornamento.svg" autocomplete="off"></div>
+            <button class="btn btn--ghost btn--sm" id="btn-art-clear" type="button">Remover imagem</button>
+            <p class="muted">As imagens são usadas por link (não pesam o banco). Cole o endereço e ela aparece na capa na hora.</p>
+            <p class="muted">Toque na imagem, no título ou na autoria dentro da capa para ajustar cor, fonte e tamanho. Arraste a imagem para mover.</p>
+
+          </details>
+          <details class="ad-box">
+            <summary>Créditos e direitos</summary>
+            <p class="muted">Página gerada automaticamente, com a logo. Por padrão fica logo depois da capa.</p>
+            <div class="field"><label for="f-year">Ano</label><input id="f-year" type="number" min="1900" max="2100" inputmode="numeric"></div>
+            <div class="field"><label for="f-isbn">ISBN (opcional)</label><input id="f-isbn" maxlength="40" type="text"></div>
+            <div class="field"><label for="f-holder">Titular dos direitos</label><input id="f-holder" maxlength="200" type="text" placeholder="Igual à autoria"></div>
+            <div class="field"><label for="f-credits">Texto extra</label><textarea id="f-credits" maxlength="600" rows="3" placeholder="Revisão, ilustrações, agradecimentos…"></textarea></div>
+            <div class="field"><label for="f-credpos">Posição da página</label>
+              <select id="f-credpos"><option value="front">No começo (depois da capa)</option><option value="back">No final do ebook</option></select>
+            </div>
+          </details>
+        </div>
+      </aside>
+
+      <!-- Centro -->
+      <section class="ad-center" aria-label="Página em edição">
+        <div class="ad-canvas-wrap" id="canvas-wrap">
+          <div id="canvas" class="ad-canvas"></div>
+          <div id="qtb" class="qtb" hidden role="toolbar" aria-label="Ações do elemento">
+            <button type="button" data-act="blk-up" aria-label="Subir"><svg viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg></button>
+            <button type="button" data-act="blk-down" aria-label="Descer"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+            <button type="button" data-act="blk-dup" aria-label="Duplicar"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
+            <button type="button" data-act="blk-del" aria-label="Excluir" class="is-danger"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+          </div>
+        </div>
+        <p class="hint" id="hint">Toque em um elemento para editar. Dois toques no texto para digitar direto na página.</p>
+
+        <div class="strip-wrap">
+          <ol id="pages-list" class="strip" aria-label="Páginas"></ol>
+        </div>
+      </section>
+
+      <!-- Inspetor -->
+      <aside class="ad-right sheet" id="sheet-insp" aria-label="Ajustes">
+        <div class="sheet-head"><span>Ajustes</span><button type="button" class="ib" data-close-sheet aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <div class="sheet-body" id="inspector"></div>
+      </aside>
+    </div>
+
+    <!-- Barra inferior (celular) -->
+    <nav class="dock" aria-label="Ferramentas">
+      <button type="button" data-open="sheet-book"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 4v16"/></svg>Livro</button>
+      <button type="button" data-add="title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg>Título</button>
+      <button type="button" data-add="text"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Texto</button>
+      <button type="button" data-add="image"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>Foto</button>
+      <button type="button" data-add="line"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"/><path d="M8 7l-3 5 3 5M16 7l3 5-3 5" opacity=".0"/></svg>Linha</button>
+      <button type="button" data-open="sheet-insp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Ajustes</button>
+    </nav>
+  </div>
+
+  <!-- Modelos de página -->
+  <div id="layouts" class="modal" hidden>
+    <div class="modal__card" role="dialog" aria-modal="true" aria-label="Nova página">
+      <h2>Nova página</h2>
+      <div class="layouts">
+        <button type="button" data-layout="blank"><span class="lay lay--blank"></span>Em branco</button>
+        <button type="button" data-layout="chapter"><span class="lay lay--chapter"></span>Título e texto</button>
+        <button type="button" data-layout="photo"><span class="lay lay--photo"></span>Foto e legenda</button>
+        <button type="button" data-layout="verse"><span class="lay lay--verse"></span>Versículo</button>
+      </div>
+      <button type="button" class="btn btn--ghost btn--block" data-close-modal>Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Visualização em livro -->
+  <div id="preview" class="pv" hidden>
+    <div class="pv__panel" role="dialog" aria-modal="true" aria-label="Visualização do ebook">
+      <button class="ib pv__close" id="pv-close" type="button" aria-label="Fechar visualização"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div id="pv-book"></div>
+      <div class="pv__nav">
+        <button class="btn btn--secondary btn--sm" id="pv-prev" type="button">Anterior</button>
+        <span id="pv-count" class="muted"></span>
+        <button class="btn btn--primary btn--sm" id="pv-next" type="button">Próxima</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script type="module" src="js/admin.js?v=202610151436"></script>
+</body>
+</html>

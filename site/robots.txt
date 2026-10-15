@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /ler.html
+Disallow: /admin-ebook.html
+Disallow: /admin-ebooks.html

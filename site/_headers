@@ -13,6 +13,10 @@
 /admin.html
   Cache-Control: no-store
   X-Robots-Tag: noindex, nofollow
+/admin-ebook.html
+/admin-ebooks.html
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
 /ler.html
   Cache-Control: no-store
   X-Robots-Tag: noindex
