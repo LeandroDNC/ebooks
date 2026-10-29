@@ -173,10 +173,9 @@ async function init() {
     ev.preventDefault();
     const email = $("#auth-email").value.trim();
     const password = $("#auth-password").value;
-    const fullName = $("#auth-name").value.trim();
-    if (!email || password.length < 8 || (mode === "signup" && !fullName)) {
-      return message("Preencha todos os campos. A senha deve ter ao menos 8 caracteres.");
-    }
+    const fullName = $("#auth-name").value.trim() || email.split("@")[0];
+    if (!email || !email.includes("@")) return message("Informe um e-mail válido.");
+    if (password.length < 8) return message("A senha deve ter ao menos 8 caracteres.");
     const btn = $("#auth-submit");
     btn.disabled = true;
     message("Aguarde…", false);

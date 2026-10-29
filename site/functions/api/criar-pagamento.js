@@ -88,6 +88,10 @@ export async function onRequestPost({ request, env }) {
       },
       auto_return: "approved",
       statement_descriptor: "INTIMAGRACA",
+      // Só cartão e Pix: remove boleto (ticket) e pagamento em lotérica/caixa (atm).
+      payment_methods: {
+        excluded_payment_types: [{ id: "ticket" }, { id: "atm" }],
+      },
     };
 
     const mpResp = await fetch("https://api.mercadopago.com/checkout/preferences", {
