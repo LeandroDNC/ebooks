@@ -1,0 +1,69 @@
+/* =====================================================================
+   Efeitos — ebooks em 3D, revelação ao rolar e microinterações.
+   Carregado depois de styles.css/theme.css. Respeita prefers-reduced-motion.
+   ===================================================================== */
+
+/* ---- Ebook em 3D (catálogo e destaques) ---- */
+.ebook-card > a { display: block; perspective: 1500px; }
+
+.ebook-card > a .cover {
+  position: relative;
+  border-radius: 3px 9px 9px 3px;
+  box-shadow:
+    11px 16px 30px -14px rgba(31, 51, 41, .55),
+    3px 4px 10px -5px rgba(31, 51, 41, .35);
+  transition: transform .55s cubic-bezier(.2, .7, .2, 1),
+              box-shadow .55s cubic-bezier(.2, .7, .2, 1);
+}
+
+/* camadas: imagem no fundo, lombada/páginas no meio, texto na frente */
+.ebook-card > a .cover img { z-index: 1; }
+.ebook-card > a .cover::before,
+.ebook-card > a .cover::after { z-index: 2; pointer-events: none; }
+.ebook-card > a .cover__frame,
+.ebook-card > a .cover__leaf,
+.ebook-card > a .cover__title,
+.ebook-card > a .cover__author { position: relative; z-index: 3; }
+
+/* lombada: sombra do vinco à esquerda */
+.ebook-card > a .cover::before {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 11%;
+  background: linear-gradient(90deg, rgba(0,0,0,.34), rgba(0,0,0,.12) 55%, rgba(0,0,0,0));
+  border-radius: 3px 0 0 3px;
+}
+/* corte das páginas à direita */
+.ebook-card > a .cover::after {
+  content: ""; position: absolute; top: 3%; bottom: 3%; right: 0; width: 6px;
+  background: repeating-linear-gradient(90deg, #fbf9f3 0 1px, #cfc9ba 1px 2.5px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ebook-card > a .cover { transform: rotateY(-21deg); }
+  .ebook-card > a:hover .cover,
+  .ebook-card > a:focus-visible .cover {
+    transform: rotateY(-7deg) translateY(-8px);
+    box-shadow:
+      20px 26px 46px -16px rgba(31, 51, 41, .60),
+      4px 6px 14px -6px rgba(31, 51, 41, .42);
+  }
+}
+
+/* ---- Card: leve elevação ---- */
+.ebook-card { transition: box-shadow .25s ease, transform .3s cubic-bezier(.2, .7, .2, 1); }
+.ebook-card:hover { transform: translateY(-4px); }
+
+/* ---- Botão comprar/obter: brilho sutil ao passar o mouse ---- */
+.btn--cart { position: relative; overflow: hidden; }
+.btn--cart::after {
+  content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent);
+  transform: skewX(-18deg); transition: left .6s ease;
+}
+.btn--cart:hover::after { left: 130%; }
+
+/* ---- Revelação ao rolar ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { opacity: 0; transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2, .7, .2, 1); }
+  .reveal.is-in { opacity: 1; transform: none; }
+}

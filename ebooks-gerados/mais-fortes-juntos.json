@@ -1,0 +1,173 @@
+{
+  "title": "Mais Fortes Juntos",
+  "author": "Íntima Graça",
+  "category": "Casais",
+  "price": 0,
+  "coverColor": "#344E41",
+  "coverImage": "https://images.unsplash.com/photo-1506014299253-3725319c0f69?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
+  "year": 2026,
+  "holder": "Íntima Graça",
+  "isbn": "",
+  "creditsText": "Versículos: Bíblia Sagrada, Almeida Revista e Corrigida (edição antiga, domínio público). Imagem de capa: Unsplash (licença de uso livre).",
+  "creditsPosition": "front",
+  "coverStyles": {
+    "cover-title": { "font": "Cormorant Garamond", "size": 9, "bold": true, "align": "center", "color": "#F8F6F0" },
+    "cover-author": { "font": "Manrope", "size": 3.6, "align": "center", "color": "#C6A667" }
+  },
+  "pages": [
+    { "bg": "#F8F6F0", "blocks": [
+      { "type": "text", "text": "Mais Fortes Juntos", "font": "Cormorant Garamond", "size": 9, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "7 dias de devocional para casais", "font": "Manrope", "size": 4.2, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 45, "align": "center" },
+      { "type": "text", "text": "\"E o cordão de três dobras não se quebra tão depressa.\"", "font": "Cormorant Garamond", "size": 6, "italic": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "Eclesiastes 4:12 (ARC)", "font": "Manrope", "size": 3.4, "align": "center", "color": "#C6A667" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Como usar este devocional", "font": "Cormorant Garamond", "size": 7, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "fade", "color": "#A3B18A", "thickness": 1, "width": 30, "align": "center" },
+      { "type": "text", "text": "São sete dias, para serem vividos a dois. Reservem de cinco a dez minutos juntos, de preferência no mesmo horário: no café da manhã ou antes de dormir.\n\nLeiam o versículo em voz alta, revezando os dias. Conversem com calma sobre as perguntas de \"Para refletir\" e terminem fazendo a oração juntos, de mãos dadas.\n\nNão se trata de ter todas as respostas, e sim de caminhar lado a lado. Um caderno por perto ajuda a anotar o que tocar o coração de vocês.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Dia 1\nDeus no centro", "font": "Cormorant Garamond", "size": 8, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "\"Se o Senhor não edificar a casa, em vão trabalham os que a edificam.\"", "font": "Cormorant Garamond", "size": 6.5, "italic": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "Salmos 127:1 (ARC)", "font": "Manrope", "size": 3.4, "align": "center", "color": "#C6A667" },
+      { "type": "text", "text": "Todo casal constrói algo: uma rotina, uma casa, uma história. Vocês escolhem as cores, dividem as contas, sonham com o futuro. Mas há uma pergunta que muda tudo: quem está no comando dessa construção?\n\nQuando o relacionamento gira só em torno de vocês dois, cada frustração vira uma rachadura. Expectativas não ditas, cansaço, pequenas mágoas que se acumulam. Dois nem sempre bastam para sustentar o peso de uma vida inteira.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Colocar Deus no centro não é um detalhe religioso: é a fundação. É decidir, juntos, que as escolhas passam pela oração antes de passarem pela discussão. É pedir sabedoria em vez de apenas reclamar.\n\nHoje, parem um instante e reconheçam: esta casa não é só de vocês. Convidem Deus para o centro dela.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "line", "style": "fade", "color": "#A3B18A", "thickness": 1, "width": 30, "align": "center" },
+      { "type": "text", "text": "Para refletir", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "1. O que, hoje, está ocupando o centro do relacionamento de vocês?\n2. Em que decisão recente vocês esqueceram de orar juntos?", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Oração", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Senhor, sê tu o fundamento da nossa casa. Sem ti, trabalhamos em vão. Edifica o nosso amor sobre a tua Palavra. Amém.", "font": "Manrope", "size": 4, "italic": true, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Dia 2\nCaminhar de acordo", "font": "Cormorant Garamond", "size": 8, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "\"Porventura andarão dois juntos, se não estiverem de acordo?\"", "font": "Cormorant Garamond", "size": 6.5, "italic": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "Amós 3:3 (ARC)", "font": "Manrope", "size": 3.4, "align": "center", "color": "#C6A667" },
+      { "type": "text", "text": "A pergunta do profeta parece simples, mas revela um segredo do casamento: andar junto exige concordância. Não concordar em tudo, mas combinar o passo.\n\nMuitos casais dividem a mesma casa e caminham em direções opostas. Um quer poupar, o outro gastar; um quer falar, o outro calar. Nem sempre é falta de amor; muitas vezes é falta de combinado.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Estar de acordo começa com uma conversa honesta sobre para onde vocês querem ir. Quais são os valores inegociáveis? O que vocês querem construir nos próximos anos?\n\nCaminhar junto é ajustar o passo um do outro, de novo e de novo. Hoje, alinhem uma direção, por menor que seja.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "line", "style": "fade", "color": "#A3B18A", "thickness": 1, "width": 30, "align": "center" },
+      { "type": "text", "text": "Para refletir", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "1. Em que área vocês têm caminhado em direções diferentes?\n2. Que combinado simples vocês podem fazer hoje?", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Oração", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Pai, ajuda-nos a caminhar de acordo. Que o nosso passo seja o mesmo, guiado por ti. Amém.", "font": "Manrope", "size": 4, "italic": true, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Dia 3\nProntos para ouvir", "font": "Cormorant Garamond", "size": 8, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "\"Todo o homem seja pronto para ouvir, tardio para falar, tardio para se irar.\"", "font": "Cormorant Garamond", "size": 6.5, "italic": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "Tiago 1:19 (ARC)", "font": "Manrope", "size": 3.4, "align": "center", "color": "#C6A667" },
+      { "type": "text", "text": "A ordem importa: primeiro ouvir, depois falar e só então, devagar, reagir.\n\nNa maioria das discussões, ninguém está ouvindo. Os dois estão apenas esperando a vez de responder. E o que era um desentendimento vira uma disputa de quem tem razão.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Ouvir de verdade é um presente raro. É olhar nos olhos, guardar o celular, deixar o outro terminar a frase. É dizer \"me ajuda a entender\" em vez de \"você está errado\".\n\nHoje, escolham ouvir antes de convencer. Muitas vezes, o outro não quer uma solução: quer ser ouvido.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "line", "style": "fade", "color": "#A3B18A", "thickness": 1, "width": 30, "align": "center" },
+      { "type": "text", "text": "Para refletir", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "1. Você costuma ouvir para entender ou para responder?\n2. Que assunto difícil merece uma conversa calma hoje?", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Oração", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Senhor, faze-me pronto para ouvir e tardio para falar. Guarda a minha língua e abranda o meu coração. Amém.", "font": "Manrope", "size": 4, "italic": true, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Dia 4\nO perdão que liberta", "font": "Cormorant Garamond", "size": 8, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "\"Perdoando-vos uns aos outros... assim como Cristo vos perdoou, assim fazei vós também.\"", "font": "Cormorant Garamond", "size": 6.5, "italic": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "Colossenses 3:13 (ARC)", "font": "Manrope", "size": 3.4, "align": "center", "color": "#C6A667" },
+      { "type": "text", "text": "Viver com alguém é acumular motivos para mágoa. A palavra dura, o esquecimento, a promessa não cumprida. Se cada falha for guardada, o coração vira um arquivo de queixas, e nenhum amor sobrevive debaixo de tanto peso.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Perdoar não é fingir que não doeu. É escolher não cobrar para sempre. É soltar o outro da dívida, como Cristo nos soltou.\n\nO perdão é uma decisão antes de ser um sentimento. Hoje, se há algo preso entre vocês, tragam à luz e deixem ir.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "line", "style": "fade", "color": "#A3B18A", "thickness": 1, "width": 30, "align": "center" },
+      { "type": "text", "text": "Para refletir", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "1. Que mágoa você ainda cobra do seu cônjuge?\n2. Há algo que você precisa pedir perdão hoje?", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Oração", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Senhor, assim como me perdoaste, ajuda-me a perdoar. Tira de mim o peso da mágoa. Amém.", "font": "Manrope", "size": 4, "italic": true, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Dia 5\nOrar juntos", "font": "Cormorant Garamond", "size": 8, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "\"Onde estiverem dois ou três reunidos em meu nome, aí estou eu no meio deles.\"", "font": "Cormorant Garamond", "size": 6.5, "italic": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "Mateus 18:20 (ARC)", "font": "Manrope", "size": 3.4, "align": "center", "color": "#C6A667" },
+      { "type": "text", "text": "Existe uma intimidade que não se alcança só pela conversa nem pelo toque: a de orar juntos. Quando um casal se aquieta lado a lado, abre o coração diante de Deus e um do outro ao mesmo tempo.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "A oração a dois não precisa ser longa nem bonita. Pode ser uma frase antes de dormir, um agradecimento no café, um pedido nas horas difíceis.\n\nComecem pequeno. Deem as mãos hoje e façam uma oração curta, juntos. O meio de vocês passa a ter mais Alguém.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "line", "style": "fade", "color": "#A3B18A", "thickness": 1, "width": 30, "align": "center" },
+      { "type": "text", "text": "Para refletir", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "1. Vocês têm o hábito de orar juntos?\n2. Que momento do dia pode virar o horário da oração de vocês?", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Oração", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Senhor, ensina-nos a orar juntos. Estejas no meio de nós, hoje e sempre. Amém.", "font": "Manrope", "size": 4, "italic": true, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Dia 6\nO cordão de três dobras", "font": "Cormorant Garamond", "size": 8, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "\"E o cordão de três dobras não se quebra tão depressa.\"", "font": "Cormorant Garamond", "size": 6.5, "italic": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "Eclesiastes 4:12 (ARC)", "font": "Manrope", "size": 3.4, "align": "center", "color": "#C6A667" },
+      { "type": "text", "text": "Dois fios trançados são mais fortes que um. Mas o texto fala de três. No casamento, o terceiro fio é Deus, e é ele que segura quando a força de vocês acaba.\n\nHaverá dias em que um dos dois não aguenta. É aí que o terceiro fio sustenta os outros dois.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Um casamento de dois fios depende de que ambos estejam sempre fortes. Um casamento de três fios descansa em Alguém que nunca enfraquece.\n\nHoje, lembrem-se: vocês não seguram tudo sozinhos. Entreguem a Deus o que está pesado demais para carregarem a dois.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "line", "style": "fade", "color": "#A3B18A", "thickness": 1, "width": 30, "align": "center" },
+      { "type": "text", "text": "Para refletir", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "1. O que, hoje, está pesado demais para vocês dois?\n2. Como entregar isso a Deus, juntos?", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Oração", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Senhor, sê o terceiro fio da nossa união. Quando a nossa força faltar, sustenta-nos. Amém.", "font": "Manrope", "size": 4, "italic": true, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Dia 7\nRevesti-vos de amor", "font": "Cormorant Garamond", "size": 8, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "\"E, sobre tudo isto, revesti-vos de caridade, que é o vínculo da perfeição.\"", "font": "Cormorant Garamond", "size": 6.5, "italic": true, "align": "center", "color": "#344E41" },
+      { "type": "text", "text": "Colossenses 3:14 (ARC)", "font": "Manrope", "size": 3.4, "align": "center", "color": "#C6A667" },
+      { "type": "text", "text": "Chegamos ao fim de sete dias. Falamos de Deus no centro, de ouvir, de perdoar, de orar. Mas sobre tudo isso há uma peça que amarra as outras: o amor.\n\nAmor, aqui, não é só sentimento. É roupa que se veste todo dia, por escolha, mesmo nos dias em que o sentimento esfria.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "O amor é o vínculo que mantém tudo no lugar: a paciência, o perdão, a humildade. Sem ele, as outras virtudes se desfazem.\n\nVocês terminam esta jornada, mas o hábito começa agora. Vistam-se de amor hoje, e amanhã, e no dia seguinte. É assim que dois se tornam, de verdade, mais fortes juntos.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "line", "style": "fade", "color": "#A3B18A", "thickness": 1, "width": 30, "align": "center" },
+      { "type": "text", "text": "Para refletir", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "1. Como vocês podem vestir o amor na prática esta semana?\n2. Qual foi o dia que mais tocou vocês nesta jornada?", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Oração", "font": "Cormorant Garamond", "size": 5.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "Senhor, revesti-nos de amor, o vínculo perfeito. Que o nosso casamento seja um reflexo do teu amor. Amém.", "font": "Manrope", "size": 4, "italic": true, "align": "left", "color": "#344E41" }
+    ] },
+
+    { "bg": "#F8F6F0", "blocks": [
+      { "type": "text", "text": "O começo de um novo hábito", "font": "Cormorant Garamond", "size": 7, "bold": true, "align": "center", "color": "#344E41" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "Vocês chegaram ao fim de sete dias, mas o mais importante começa agora.\n\nUm bom casamento não se constrói em uma semana, e sim em pequenos hábitos repetidos: orar juntos, ouvir com calma, perdoar rápido, colocar Deus no centro.\n\nQue estes dias tenham plantado uma semente. Reguem-na todos os dias.", "font": "Manrope", "size": 4, "align": "left", "color": "#344E41" },
+      { "type": "text", "text": "\"O Senhor vos abençoe e vos guarde; o Senhor faça resplandecer o seu rosto sobre vós e vos dê a paz.\"", "font": "Cormorant Garamond", "size": 5.5, "italic": true, "align": "center", "color": "#344E41" }
+    ] },
+
+    { "bg": "#FFFFFF", "blocks": [
+      { "type": "text", "text": "Minhas anotações", "font": "Cormorant Garamond", "size": 6.5, "bold": true, "align": "left", "color": "#344E41" },
+      { "type": "line", "style": "dotted", "color": "#A3B18A", "thickness": 1, "width": 100, "align": "center" },
+      { "type": "line", "style": "dotted", "color": "#A3B18A", "thickness": 1, "width": 100, "align": "center" },
+      { "type": "line", "style": "dotted", "color": "#A3B18A", "thickness": 1, "width": 100, "align": "center" },
+      { "type": "line", "style": "dotted", "color": "#A3B18A", "thickness": 1, "width": 100, "align": "center" },
+      { "type": "line", "style": "dotted", "color": "#A3B18A", "thickness": 1, "width": 100, "align": "center" }
+    ] },
+
+    { "bg": "#344E41", "blocks": [
+      { "type": "text", "text": "Continue a caminhada", "font": "Cormorant Garamond", "size": 7, "bold": true, "align": "center", "color": "#F8F6F0" },
+      { "type": "line", "style": "ornament", "color": "#C6A667", "thickness": 2, "width": 40, "align": "center" },
+      { "type": "text", "text": "Se esta jornada fez bem ao coração de vocês, que tal continuar?\n\nA Íntima Graça tem outros devocionais para nutrir a sua fé: para mulheres, para a família e para momentos de oração.\n\nE se este devocional abençoou vocês, compartilhem com um casal amigo. O amor que se multiplica é o que mais cresce.", "font": "Manrope", "size": 4, "align": "left", "color": "#F8F6F0" }
+    ] }
+  ]
+}

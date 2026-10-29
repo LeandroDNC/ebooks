@@ -1,7 +1,7 @@
 // Leitor: abre o ebook em formato de livro. O conteúdo só é entregue pelo banco
 // para o administrador e para quem tem o ebook na biblioteca (políticas RLS).
 import { supabase } from "./supabase.js?v=202610291500";
-import { buildSequence, FlipBook } from "./book-render.js?v=202610291500";
+import { buildSequence, FlipBook, renderCover, renderPage } from "./book-render.js?v=202610291500";
 import { Marcas } from "./reader-highlight.js?v=202610291500";
 import { iniciarFerramentas } from "./reader-tools.js?v=202610291500";
 
@@ -162,6 +162,79 @@ async function abrirLivro(livroId) {
   };
 }
 
+const brl = (n) => `R$ ${Number(n).toFixed(2).replace(".", ",")}`;
+
+// Amostra grátis: capa + primeira página, com convite para comprar/entrar.
+// Não precisa comprar para ver isto (função previa_livro no banco).
+async function mostrarPrevia(logado) {
+  const { data } = await supabase.rpc("previa_livro", { p_id: id });
+  if (!data || !data.capa) {
+    return say("Devocional não encontrado. <a href=\"devocionais.html\">Ver devocionais</a>");
+  }
+  const capa = data.capa;
+  const meta = data.meta || {};
+  const book = {
+    title: capa.title || meta.title || "",
+    author: capa.author || meta.author || "",
+    coverColor: capa.coverColor,
+    coverImage: capa.coverImage,
+    coverArt: capa.coverArt,
+    coverStyles: capa.coverStyles,
+    pages: data.primeira_pagina ? [data.primeira_pagina] : [],
+  };
+  carregarFontes(book);
+  document.title = `${book.title || "Amostra"} | Íntima Graça`;
+  $("#rd-title").textContent = book.title || "";
+  $("#rd-msg").hidden = true;
+  $("#rd-book").hidden = false;
+  $("#rd-nav").hidden = false;
+
+  const paginas = [renderCover(book)];
+  if (data.primeira_pagina) paginas.push(renderPage(data.primeira_pagina, null, false, null));
+
+  const flip = new FlipBook($("#rd-book"), paginas, (c, t) => {
+    $("#rd-count").textContent = `Amostra grátis · ${c + 1} / ${t}`;
+  });
+
+  const ajustar = () => {
+    const usado = ($(".rd-bar")?.offsetHeight || 0) + ($("#rd-nav")?.offsetHeight || 0) + 140;
+    document.documentElement.style.setProperty("--rd-livro-max", `${Math.max(120, window.innerHeight - usado)}px`);
+  };
+  ajustar();
+  addEventListener("resize", ajustar);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustar);
+
+  $("#rd-next").addEventListener("click", () => flip.next());
+  $("#rd-prev").addEventListener("click", () => flip.prev());
+  addEventListener("keydown", (e) => {
+    if (e.target.closest && e.target.closest("input, select, textarea")) return;
+    if (e.key === "ArrowRight") flip.next();
+    if (e.key === "ArrowLeft") flip.prev();
+  });
+
+  // Convite abaixo do livro
+  const preco = meta.price != null && Number(meta.price) > 0 ? ` · ${brl(meta.price)}` : "";
+  const cta = document.createElement("div");
+  cta.setAttribute(
+    "style",
+    "margin:14px auto 0;max-width:460px;text-align:center;padding:14px 16px;border-radius:14px;" +
+      "background:rgba(52,78,65,.06);border:1px solid rgba(52,78,65,.12)"
+  );
+  cta.innerHTML =
+    '<p style="margin:0 0 10px;font-weight:600">Amostra grátis — leia tudo adquirindo o devocional.</p>' +
+    (logado
+      ? '<button class="btn btn--primary btn--sm" type="button" id="rd-comprar">Comprar e ler tudo' + preco + "</button>"
+      : '<a class="btn btn--primary btn--sm" href="biblioteca.html?comprar=' +
+        encodeURIComponent(id) +
+        '">Entrar e comprar' + preco + "</a>");
+  document.querySelector(".rd-main")?.appendChild(cta);
+  if (logado) {
+    $("#rd-comprar")?.addEventListener("click", () => {
+      location.href = `pagamento.html?id=${encodeURIComponent(id)}`;
+    });
+  }
+}
+
 (async () => {
   if (DEMO) return iniciarLeitura(LIVRO_DEMO, true);
   if (!supabase || !id) return say("Devocional não encontrado. <a href=\"devocionais.html\">Ver devocionais</a>");
@@ -171,10 +244,12 @@ async function abrirLivro(livroId) {
   // Visitante sem login: só a vitrine pública (o livro é gratuito?)
   if (!session.session) {
     const { data: b } = await supabase.from("books").select("id,price,published").eq("id", id).maybeSingle();
-    if (!b) return say("Devocional não encontrado. <a href=\"devocionais.html\">Ver devocionais</a>");
-    const livre = Boolean(b.published && (b.price == null || Number(b.price) === 0));
-    const alvo = livre ? `biblioteca.html?obter=${encodeURIComponent(id)}` : "biblioteca.html";
-    return say(`${livre ? "Este devocional é gratuito. Entre ou crie sua conta para obtê-lo." : "Entre na sua conta para ler este devocional."} <a class="btn btn--primary btn--sm" href="${alvo}">Entrar</a>`);
+    if (!b || !b.published) return say("Devocional não encontrado. <a href=\"devocionais.html\">Ver devocionais</a>");
+    const livre = b.price == null || Number(b.price) === 0;
+    if (livre) {
+      return say('Este devocional é gratuito. <a class="btn btn--primary btn--sm" href="biblioteca.html?obter=' + encodeURIComponent(id) + '">Entrar e obter</a>');
+    }
+    return mostrarPrevia(false); // amostra grátis para visitante
   }
 
   // Logada: UMA chamada ao banco com meta + conteúdo (se tiver direito) + progresso
@@ -195,7 +270,7 @@ async function abrirLivro(livroId) {
       });
       return;
     }
-    return say("Este devocional ainda não está na sua biblioteca. <a href=\"devocionais.html\">Ver devocionais</a>");
+    return mostrarPrevia(true); // amostra grátis + botão comprar
   }
 
   return iniciarLeitura(r.conteudo, false, typeof r.progresso === "number" ? r.progresso : -1);

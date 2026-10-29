@@ -568,7 +568,7 @@ alter table public.books drop constraint if exists books_formato;
 alter table public.books add constraint books_formato check (
   id ~ '^[A-Za-z0-9_-]{1,64}$'
   and color ~ '^#[0-9a-fA-F]{3,8}$'
-  and (cover_url is null or cover_url ~* '^https://[^[:space:]"<>'']{1,2000}$')
+  and (cover_url is null or (cover_url ~* '^https://[^[:space:]"<>'']+$' and char_length(cover_url) <= 2000))
 ) not valid;
 
 -- 6) Biblioteca só aponta para livros que existem
@@ -588,7 +588,7 @@ declare
   u  text;
   tipo text;
   re_cor constant text := '^#[0-9a-fA-F]{3,8}$';
-  re_url constant text := '^https://[^[:space:]"<>'']{1,2000}$';
+  re_url constant text := '^https://[^[:space:]"<>'']+$';
 begin
   if d is null or jsonb_typeof(d) <> 'object' then
     raise exception 'Conteúdo do ebook inválido.' using errcode = '22023';
