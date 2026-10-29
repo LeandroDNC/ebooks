@@ -8,8 +8,8 @@
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
 
-const SUPABASE_URL = "https://sezaazpoybpqnhayzgkk.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlemFhenBveWJwcW5oYXl6Z2trIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE5NDcxMjcsImV4cCI6MjEwNzUyMzEyN30.asW3jliBpNDnCA1Q0Xz555QaJvn97fmZ9spt9eNcjJA";
+const SUPABASE_URL = "https://rkegombxusjkdveieqrw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrZWdvbWJ4dXNqa2R2ZWllcXJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxNTMzNTMsImV4cCI6MjEwODcyOTM1M30.bv8morZPHaPmZ0GPQa94JQCMYcZK9kx78oGGGlvdId0";
 
 export const supabase =
   SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
