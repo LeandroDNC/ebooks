@@ -26,31 +26,6 @@
     if (e.key === "Escape" && !drawer.hidden) setMenu(false);
   });
 
-  // ---- Contador do carrinho (provisório, em memória) ----
-  let cart = 0;
-  document.addEventListener("click", (e) => {
-    if (!e.target.closest("[data-add-to-cart]")) return;
-    cart += 1;
-    $("#cart-count").textContent = cart;
-    $(".cart").setAttribute("aria-label", `Carrinho, ${cart} itens`);
-
-    // Feedback no botão: "Adicionado" por um instante
-    const btn = e.target.closest("[data-add-to-cart]");
-    const label = btn.querySelector(".btn__label");
-    if (!label || btn.classList.contains("is-added")) return;
-    const original = label.innerHTML;
-    btn.classList.add("is-added");
-    btn.querySelector(".icon")?.replaceWith(Object.assign(document.createElement("span"), { innerHTML: icon("tick", 18) }).firstChild);
-    label.textContent = "Adicionado";
-    $(".cart")?.classList.add("bump");
-    setTimeout(() => $(".cart")?.classList.remove("bump"), 400);
-    setTimeout(() => {
-      btn.classList.remove("is-added");
-      btn.querySelector(".icon")?.replaceWith(Object.assign(document.createElement("span"), { innerHTML: icon("bag", 18) }).firstChild);
-      label.innerHTML = original;
-    }, 1600);
-  });
-
   // ---- Home ----
   const D = window.INTIMA;
   const fill = (sel, html) => { const el = $(sel); if (el) el.innerHTML = html; };

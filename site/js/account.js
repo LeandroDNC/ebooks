@@ -47,7 +47,7 @@ function translate(error) {
   if (m.includes("invalid login")) return "E-mail ou senha incorretos.";
   if (m.includes("already registered")) return "Este e-mail já tem cadastro. Use a aba Entrar.";
   if (m.includes("email not confirmed")) return "Confirme seu e-mail pelo link que enviamos antes de entrar.";
-  if (m.includes("password")) return "A senha precisa ter pelo menos 6 caracteres.";
+  if (m.includes("password")) return "A senha precisa ter pelo menos 8 caracteres.";
   if (m.includes("rate limit")) return "Muitas tentativas. Aguarde um pouco e tente de novo.";
   return "Não foi possível concluir. Tente novamente.";
 }
@@ -65,8 +65,39 @@ async function obterDaUrl() {
   return true;
 }
 
+// Voltando de "Comprar" sem login: agora logado, cria o pagamento e vai ao Mercado Pago.
+async function comprarDaUrl() {
+  const id = new URLSearchParams(location.search).get("comprar");
+  if (!id) return false;
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) return false;
+    const resp = await fetch("/api/criar-pagamento", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${data.session.access_token}`,
+      },
+      body: JSON.stringify({ ebook_id: id }),
+    });
+    const r = await resp.json().catch(() => ({}));
+    if (resp.status === 409 && r.erro === "ja_adquirido") {
+      location.replace(`ler.html?id=${encodeURIComponent(id)}`);
+      return true;
+    }
+    if (resp.ok && r.init_point) {
+      location.replace(r.init_point);
+      return true;
+    }
+  } catch (_) {
+    /* cai no painel normal */
+  }
+  return false;
+}
+
 async function renderPanel(user) {
   if (await obterDaUrl()) return;
+  if (await comprarDaUrl()) return;
   const name = user.user_metadata?.full_name;
   $("#panel-title").textContent = name ? `Olá, ${name.split(" ")[0]}` : "Olá!";
   $("#panel-email").textContent = user.email;
@@ -143,8 +174,8 @@ async function init() {
     const email = $("#auth-email").value.trim();
     const password = $("#auth-password").value;
     const fullName = $("#auth-name").value.trim();
-    if (!email || password.length < 6 || (mode === "signup" && !fullName)) {
-      return message("Preencha todos os campos. A senha deve ter ao menos 6 caracteres.");
+    if (!email || password.length < 8 || (mode === "signup" && !fullName)) {
+      return message("Preencha todos os campos. A senha deve ter ao menos 8 caracteres.");
     }
     const btn = $("#auth-submit");
     btn.disabled = true;

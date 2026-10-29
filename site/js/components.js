@@ -99,7 +99,7 @@
         <p class="price${e.free ? " price--free" : ""}">${escapeHtml(e.price)}</p>
         ${e.free
           ? `<button class="btn btn--primary btn--block btn--cart" type="button" data-claim="${escapeHtml(e.id)}">${icon("book", 18)}<span class="btn__label">Obter grátis</span></button>`
-          : `<button class="btn btn--primary btn--block btn--cart" type="button" data-add-to-cart="${escapeHtml(e.id)}">${icon("bag", 18)}<span class="btn__label">Adicionar<span class="btn__long">&nbsp;ao carrinho</span></span></button>`}
+          : `<button class="btn btn--primary btn--block btn--cart" type="button" data-comprar="${escapeHtml(e.id)}">${icon("bag", 18)}<span class="btn__label">Comprar</span></button>`}
       </div>
     </article>`;
   }
@@ -124,7 +124,6 @@
             <span class="theme-toggle__track" aria-hidden="true">${icon("sun", 14)}${icon("moon", 14)}<span class="theme-toggle__knob"></span></span>
           </button>
           <a class="btn btn--ghost account-link" href="biblioteca.html">${icon("user", 18)} Entrar</a>
-          <a class="icon-btn cart" href="#" aria-label="Carrinho, 0 itens">${icon("bag", 22)}<span class="cart__count" id="cart-count">0</span></a>
         </div>
       </div>
     </header>
