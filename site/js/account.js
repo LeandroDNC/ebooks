@@ -1,6 +1,6 @@
 // Login, cadastro e painel do usuário.
 // Uso do banco: Auth (login) + UMA consulta em user_library ao abrir o painel.
-import { supabase } from "./supabase.js?v=202610291500";
+import { supabase } from "./supabase.js";
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => UI.escapeHtml(s);
@@ -65,34 +65,14 @@ async function obterDaUrl() {
   return true;
 }
 
-// Voltando de "Comprar" sem login: agora logado, cria o pagamento e vai ao Mercado Pago.
+// Voltando de "Comprar" sem login: agora logado, vai para a tela de pagamento do site.
 async function comprarDaUrl() {
   const id = new URLSearchParams(location.search).get("comprar");
   if (!id) return false;
-  try {
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) return false;
-    const resp = await fetch("/api/criar-pagamento", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${data.session.access_token}`,
-      },
-      body: JSON.stringify({ ebook_id: id }),
-    });
-    const r = await resp.json().catch(() => ({}));
-    if (resp.status === 409 && r.erro === "ja_adquirido") {
-      location.replace(`ler.html?id=${encodeURIComponent(id)}`);
-      return true;
-    }
-    if (resp.ok && r.init_point) {
-      location.replace(r.init_point);
-      return true;
-    }
-  } catch (_) {
-    /* cai no painel normal */
-  }
-  return false;
+  const { data } = await supabase.auth.getSession();
+  if (!data.session) return false;
+  location.replace(`pagamento.html?id=${encodeURIComponent(id)}`);
+  return true;
 }
 
 async function renderPanel(user) {
@@ -173,9 +153,10 @@ async function init() {
     ev.preventDefault();
     const email = $("#auth-email").value.trim();
     const password = $("#auth-password").value;
-    const fullName = $("#auth-name").value.trim() || email.split("@")[0];
-    if (!email || !email.includes("@")) return message("Informe um e-mail válido.");
-    if (password.length < 8) return message("A senha deve ter ao menos 8 caracteres.");
+    const fullName = $("#auth-name").value.trim();
+    if (!email || password.length < 8 || (mode === "signup" && !fullName)) {
+      return message("Preencha todos os campos. A senha deve ter ao menos 8 caracteres.");
+    }
     const btn = $("#auth-submit");
     btn.disabled = true;
     message("Aguarde…", false);

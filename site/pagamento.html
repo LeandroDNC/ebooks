@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <!-- CSP desta página libera o Mercado Pago (SDK, API e iframes dos campos de cartão). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://sdk.mercadopago.com https://*.mlstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.mercadopago.com https://api.mercadolibre.com https://*.mlstatic.com https://rkegombxusjkdveieqrw.supabase.co wss://rkegombxusjkdveieqrw.supabase.co; frame-src https://*.mercadopago.com https://*.mercadolibre.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Pagamento | Íntima Graça</title>
+  <script src="js/tema-inicial.js?v=202610292000"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-intima-graca.svg">
+  <link rel="stylesheet" href="css/styles.css?v=202610151436">
+  <link rel="stylesheet" href="css/theme.css?v=202610151436">
+  <style>
+    .pg-wrap { max-width: 540px; margin: 0 auto; padding: 24px 16px 60px; }
+    .pg-top { text-align: center; margin-bottom: 20px; }
+    .pg-top img { width: 150px; height: auto; }
+    .pg-resumo { display:flex; justify-content:space-between; align-items:center; gap:12px;
+      padding:16px; border:1px solid var(--linha,#e4e0d6); border-radius:14px; margin-bottom:18px; }
+    .pg-resumo__titulo { font-family:"Cormorant Garamond",serif; font-size:1.3rem; line-height:1.2; }
+    .pg-resumo__preco { font-weight:700; font-size:1.2rem; white-space:nowrap; }
+    #pg-carregando { text-align:center; padding:24px; }
+    #pg-msg { text-align:center; padding:12px; }
+    #pg-msg h2 { font-family:"Cormorant Garamond",serif; margin:.2em 0 .4em; }
+    #pg-msg img { display:block; margin:12px auto; border-radius:8px; }
+    #pg-pix-copia { font-family:monospace; font-size:.8rem; padding:8px; border-radius:8px;
+      border:1px solid var(--linha,#e4e0d6); margin:10px 0; }
+    .pg-voltar { display:inline-block; margin-top:18px; }
+  </style>
+</head>
+<body>
+  <main class="pg-wrap">
+    <div class="pg-top">
+      <a href="devocionais.html" aria-label="Íntima Graça"><img src="assets/logo-intima-graca.svg" alt="Íntima Graça"></a>
+      <h1 class="sr-only">Pagamento</h1>
+    </div>
+
+    <div class="pg-resumo" id="pg-resumo" hidden>
+      <span class="pg-resumo__titulo" id="pg-titulo"></span>
+      <span class="pg-resumo__preco" id="pg-preco"></span>
+    </div>
+
+    <p id="pg-carregando" class="muted" role="status">Carregando pagamento…</p>
+    <div id="pg-brick"></div>
+    <div id="pg-msg" role="status" hidden></div>
+
+    <div style="text-align:center">
+      <a class="btn btn--ghost btn--sm pg-voltar" href="devocionais.html">← Voltar à loja</a>
+    </div>
+  </main>
+
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <script type="module" src="js/pagamento.js?v=202610292100"></script>
+</body>
+</html>
