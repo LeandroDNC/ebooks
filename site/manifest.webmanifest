@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "Íntima Graça",
+  "short_name": "Íntima Graça",
+  "description": "Sua biblioteca de devocionais e a loja de ebooks, sempre à mão.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/biblioteca.html?app=1",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F8F6F0",
+  "theme_color": "#344E41",
+  "categories": ["books", "lifestyle", "education"],
+  "icons": [
+    { "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Loja de ebooks", "short_name": "Loja", "url": "/devocionais.html?app=1", "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Minha biblioteca", "short_name": "Biblioteca", "url": "/biblioteca.html?app=1", "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ]
+}

@@ -33,9 +33,26 @@ export const PADRAO = {
   corMarca: "amarelo",
 };
 
+// O que vem do navegador (localStorage) pode ter sido alterado à mão: só valores esperados passam.
+const num = (v, lo, hi, d) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
+const CORES_MARCA = ["amarelo", "verde", "rosa", "azul"];
+function sanear(p) {
+  const ok = (id) => id === "personalizado" || TEMAS.some((t) => t.id === id);
+  return {
+    tema: typeof p.tema === "string" && ok(p.tema) ? p.tema : PADRAO.tema,
+    hue: num(p.hue, 0, 360, PADRAO.hue),
+    sat: num(p.sat, 15, 80, PADRAO.sat),
+    olhos: p.olhos === true,
+    olhosNivel: num(p.olhosNivel, 0, 100, PADRAO.olhosNivel),
+    volume: num(p.volume, 0, 1, PADRAO.volume),
+    corMarca: CORES_MARCA.includes(p.corMarca) ? p.corMarca : PADRAO.corMarca,
+  };
+}
+
 export function lerPrefs() {
   try {
-    return { ...PADRAO, ...(JSON.parse(localStorage.getItem(KEY)) || {}) };
+    const bruto = JSON.parse(localStorage.getItem(KEY));
+    return bruto && typeof bruto === "object" ? sanear(bruto) : { ...PADRAO };
   } catch {
     return { ...PADRAO };
   }

@@ -511,3 +511,147 @@ end;
 $$;
 revoke all on function public.admin_dashboard() from public, anon;
 grant execute on function public.admin_dashboard() to authenticated;
+
+
+-- =====================================================================
+-- VARREDURA DE SEGURANCA: tudo é validado no BANCO (o navegador pode ser adulterado).
+-- Pode ser executado várias vezes.
+--  * Consultas parametrizadas (supabase-js/PostgREST): não existe SQL montado por texto.
+--  * RLS ligada em todas as tabelas; permissões mínimas por papel.
+--  * Conteúdo dos ebooks só entra no banco se passar pela validação abaixo.
+--  * Tempo máximo por consulta (evita travar o banco com consultas pesadas).
+-- =====================================================================
+
+-- 1) RLS ligada em TODAS as tabelas do schema public
+do $$
+declare t record;
+begin
+  for t in select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
+           where n.nspname = 'public' and c.relkind = 'r' and not c.relrowsecurity loop
+    execute format('alter table public.%I enable row level security', t.relname);
+  end loop;
+end $$;
+
+-- 1b) Permissões de tabela explícitas (o Supabase concede tudo a anon por padrão; a RLS já barra,
+--     mas aqui também fechamos a porta no nível de permissão: defesa em camadas)
+revoke all on table public.books from anon, authenticated;
+grant select on table public.books to anon, authenticated;
+grant insert, update, delete on table public.books to authenticated;
+revoke all on table public.book_content from anon, authenticated;
+grant select, insert, update, delete on table public.book_content to authenticated;
+revoke all on table public.orders from anon, authenticated;
+revoke all on table public.admin_users from anon, authenticated;
+
+-- 2) Ninguém cria objetos no schema public; funções novas nascem fechadas
+revoke create on schema public from public, anon, authenticated;
+alter default privileges in schema public revoke execute on functions from public, anon;
+
+-- 3) Visitante (anon) só executa is_admin (usada pelas políticas); o resto exige login
+do $$
+declare f record;
+begin
+  for f in select p.oid::regprocedure as sig from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'public' and p.proname <> 'is_admin' and p.prokind = 'f' loop
+    begin
+      execute format('revoke execute on function %s from public, anon', f.sig);
+    exception when others then null;  -- funções de extensões: ignora
+    end;
+  end loop;
+end $$;
+
+-- 4) Tempo máximo de consulta por papel
+alter role anon set statement_timeout = '8s';
+alter role authenticated set statement_timeout = '15s';
+
+-- 5) Formato dos campos de books (vale para novas gravações)
+alter table public.books drop constraint if exists books_formato;
+alter table public.books add constraint books_formato check (
+  id ~ '^[A-Za-z0-9_-]{1,64}$'
+  and color ~ '^#[0-9a-fA-F]{3,8}$'
+  and (cover_url is null or cover_url ~* '^https://[^[:space:]"<>'']{1,2000}$')
+) not valid;
+
+-- 6) Biblioteca só aponta para livros que existem
+alter table public.user_library drop constraint if exists user_library_ebook_fk;
+alter table public.user_library add constraint user_library_ebook_fk
+  foreign key (ebook_id) references public.books (id) on delete cascade not valid;
+
+-- 7) Validação do conteúdo dos ebooks (estrutura, tamanhos, links https, cores)
+create or replace function public.validar_conteudo_ebook(d jsonb)
+returns void
+language plpgsql
+set search_path = ''
+as $fn$
+declare
+  pg jsonb;
+  bl jsonb;
+  u  text;
+  tipo text;
+  re_cor constant text := '^#[0-9a-fA-F]{3,8}$';
+  re_url constant text := '^https://[^[:space:]"<>'']{1,2000}$';
+begin
+  if d is null or jsonb_typeof(d) <> 'object' then
+    raise exception 'Conteúdo do ebook inválido.' using errcode = '22023';
+  end if;
+  if jsonb_typeof(d -> 'pages') <> 'array' or jsonb_array_length(d -> 'pages') > 200 then
+    raise exception 'O ebook precisa ter de 0 a 200 páginas.' using errcode = '22023';
+  end if;
+  if d ->> 'coverColor' is not null and (d ->> 'coverColor') !~ re_cor then
+    raise exception 'Cor da capa inválida.' using errcode = '22023';
+  end if;
+  foreach u in array array[d ->> 'coverImage', d #>> '{coverArt,src}'] loop
+    if u is not null and u <> '' and u !~* re_url then
+      raise exception 'Links de imagem devem começar com https://.' using errcode = '22023';
+    end if;
+  end loop;
+
+  for pg in select * from jsonb_array_elements(d -> 'pages') loop
+    if jsonb_typeof(pg) <> 'object' then
+      raise exception 'Página inválida.' using errcode = '22023';
+    end if;
+    if pg ->> 'bg' is not null and (pg ->> 'bg') !~ re_cor then
+      raise exception 'Cor de fundo da página inválida.' using errcode = '22023';
+    end if;
+    if jsonb_typeof(coalesce(pg -> 'blocks', '[]'::jsonb)) <> 'array'
+       or jsonb_array_length(coalesce(pg -> 'blocks', '[]'::jsonb)) > 40 then
+      raise exception 'Cada página aceita até 40 elementos.' using errcode = '22023';
+    end if;
+    for bl in select * from jsonb_array_elements(coalesce(pg -> 'blocks', '[]'::jsonb)) loop
+      if jsonb_typeof(bl) <> 'object' then
+        raise exception 'Elemento inválido.' using errcode = '22023';
+      end if;
+      tipo := bl ->> 'type';
+      if tipo is null or tipo not in ('text', 'line', 'image') then
+        raise exception 'Tipo de elemento não permitido.' using errcode = '22023';
+      end if;
+      if bl ->> 'color' is not null and (bl ->> 'color') !~ re_cor then
+        raise exception 'Cor inválida em um elemento.' using errcode = '22023';
+      end if;
+      if tipo = 'text' and char_length(coalesce(bl ->> 'text', '')) > 6000 then
+        raise exception 'Texto longo demais (máximo 6000 caracteres por bloco).' using errcode = '22023';
+      end if;
+      if tipo = 'image' and coalesce(bl ->> 'src', '') <> '' and (bl ->> 'src') !~* re_url then
+        raise exception 'Links de imagem devem começar com https://.' using errcode = '22023';
+      end if;
+    end loop;
+  end loop;
+end;
+$fn$;
+revoke all on function public.validar_conteudo_ebook(jsonb) from public, anon, authenticated;
+
+create or replace function public.book_content_validar()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $fn$
+begin
+  perform public.validar_conteudo_ebook(new.data);
+  return new;
+end;
+$fn$;
+revoke all on function public.book_content_validar() from public, anon, authenticated;
+
+drop trigger if exists book_content_validar_trg on public.book_content;
+create trigger book_content_validar_trg before insert or update of data on public.book_content
+  for each row execute function public.book_content_validar();

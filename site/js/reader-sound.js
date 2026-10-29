@@ -8,7 +8,20 @@ export const SONS = [
   { id: "fogueira", nome: "Lareira", icone: "flame" },
   { id: "noite", nome: "Noite no campo", icone: "moon" },
   { id: "piano", nome: "Piano sereno", icone: "note" },
+  { id: "pad", nome: "Cordas celestiais", icone: "sparkles" },
+  { id: "harpa", nome: "Harpa suave", icone: "rings" },
+  { id: "tigelas", nome: "Tigelas de meditação", icone: "prayer" },
 ];
+
+const midi = (m) => 440 * Math.pow(2, (m - 69) / 12);
+// Progressão em Dó maior: Cmaj7 - Am7 - Fmaj7 - G6 (notas MIDI, do grave ao agudo)
+const ACORDES = [
+  [48, 55, 59, 64, 67],
+  [45, 55, 60, 64, 67],
+  [41, 53, 57, 60, 64],
+  [43, 55, 59, 62, 64],
+];
+const PENTATONICA = [72, 74, 76, 79, 81, 84, 86]; // Dó maior pentatônica (agudos)
 
 function bufferDeRuido(ctx, tipo) {
   const dur = 4;
@@ -53,7 +66,13 @@ export class Ambiente {
       this.ctx = new AC();
       this.master = this.ctx.createGain();
       this.master.gain.value = this.vol;
-      this.master.connect(this.ctx.destination);
+      const comp = this.ctx.createDynamicsCompressor();
+      comp.threshold.value = -20;
+      comp.knee.value = 24;
+      comp.ratio.value = 3;
+      comp.attack.value = 0.02;
+      comp.release.value = 0.4;
+      this.master.connect(comp).connect(this.ctx.destination);
     }
     if (this.ctx.state === "suspended") this.ctx.resume();
     return true;
@@ -90,17 +109,64 @@ export class Ambiente {
     o.start();
     return o;
   }
-  reverb() {
-    const seg = 2.8;
+  reverb(seg = 4.2) {
     const n = Math.floor(this.ctx.sampleRate * seg);
     const ir = this.ctx.createBuffer(2, n, this.ctx.sampleRate);
     for (let c = 0; c < 2; c++) {
       const d = ir.getChannelData(c);
-      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.6);
+      let y = 0;
+      for (let i = 0; i < n; i++) {
+        const x = i / n;
+        const a = 0.15 + 0.75 * x; // a cauda vai ficando mais escura
+        y = y * a + (Math.random() * 2 - 1) * (1 - a);
+        d[i] = y * Math.pow(1 - x, 3.2) * 2.4;
+      }
     }
     const conv = this.ctx.createConvolver();
     conv.buffer = ir;
     return conv;
+  }
+
+  /** Nota de piano macio: parciais com decaimentos diferentes, martelo de feltro e leve desafinação. */
+  notaPiano(freq, t, vel, destinos, opc = {}) {
+    const ctx = this.ctx;
+    const brilho = opc.brilho ?? 1;
+    const base = Math.min(7, Math.max(1.6, 4.2 * Math.pow(220 / freq, 0.35))) * (opc.dur ?? 1);
+    const pesos = [1, 0.55, 0.3, 0.18, 0.1, 0.06];
+    const lp = this.filtro("lowpass", 1800 + vel * 4200 * brilho, 0.5);
+    lp.frequency.setValueAtTime(1800 + vel * 4200 * brilho, t);
+    lp.frequency.exponentialRampToValueAtTime(700 + 400 * brilho, t + base);
+    const nota = ctx.createGain();
+    nota.gain.value = vel * 0.22;
+    lp.connect(nota);
+    destinos.forEach((d) => nota.connect(d));
+    pesos.forEach((w, k) => {
+      [-2.5, 2.5].forEach((cents) => {
+        if (k > 1 && cents > 0) return;
+        const o = ctx.createOscillator();
+        o.type = "sine";
+        o.frequency.value = freq * (k + 1) * (k === 0 ? 1 : 1 + 0.0004 * k * k); // leve inarmonicidade
+        o.detune.value = cents;
+        const g = ctx.createGain();
+        const dec = base / Math.pow(k + 1, 0.75);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(w * (k === 0 ? 0.6 : 1), t + (opc.ataque ?? 0.006));
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dec);
+        o.connect(g).connect(lp);
+        o.start(t);
+        o.stop(t + dec + 0.1);
+      });
+    });
+    // martelo de feltro (toque curtinho e grave)
+    const ruido = ctx.createBufferSource();
+    ruido.buffer = this.buffers.rosa || (this.buffers.rosa = bufferDeRuido(ctx, "rosa"));
+    const bp = this.filtro("bandpass", Math.min(2400, freq * 2.5), 0.9);
+    const gr = ctx.createGain();
+    gr.gain.setValueAtTime(vel * 0.5, t);
+    gr.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+    ruido.connect(bp).connect(gr).connect(lp);
+    ruido.start(t, Math.random() * 2);
+    ruido.stop(t + 0.08);
   }
 
   // ---------- receitas ----------
@@ -183,42 +249,122 @@ export class Ambiente {
       });
     } else if (id === "piano") {
       const rev = this.reverb();
+      const mix = this.ganho(0.8);
+      rev.connect(mix).connect(saida);
+      const seco = this.ganho(0.55);
+      seco.connect(saida);
+      const alvos = [rev, seco];
+      const batida = 0.62 + Math.random() * 0.1; // ~ 90 bpm, calmo
+      let compasso = Math.floor(Math.random() * 4);
+      let passo = 0;
+      const tocar = () => {
+        const ac = ACORDES[compasso % ACORDES.length];
+        const t = ctx.currentTime + 0.05;
+        if (passo === 0) this.notaPiano(midi(ac[0] - 12), t, 0.55, alvos, { dur: 1.4 });
+        // arpejo suave subindo pelas notas do acorde
+        const ordem = [1, 2, 3, 4, 3, 2, 4, 3];
+        if (passo % 1 === 0 && Math.random() < 0.9) {
+          const m = ac[ordem[passo % ordem.length]];
+          this.notaPiano(midi(m), t, 0.32 + Math.random() * 0.18, alvos);
+        }
+        // melodia esparsa na pentatônica
+        if (passo % 4 === 2 && Math.random() < 0.7) {
+          const m = PENTATONICA[Math.floor(Math.random() * PENTATONICA.length)];
+          this.notaPiano(midi(m), t + 0.02, 0.42 + Math.random() * 0.18, alvos, { dur: 1.2, brilho: 1.2 });
+        }
+        passo++;
+        if (passo >= 8) { passo = 0; compasso++; }
+        timers.push(setTimeout(tocar, batida * 1000 * (0.97 + Math.random() * 0.06)));
+      };
+      tocar();
+    } else if (id === "harpa") {
+      const rev = this.reverb(5);
+      rev.connect(this.ganho(1)).connect(saida);
+      const seco = this.ganho(0.4);
+      seco.connect(saida);
+      const alvos = [rev, seco];
+      let compasso = 0;
+      const arpejo = () => {
+        const ac = ACORDES[compasso % ACORDES.length];
+        const notas = ac.slice(1).map((m) => m + 12);
+        const sobe = Math.random() < 0.6;
+        const seq = sobe ? notas : [...notas].reverse();
+        const t0 = ctx.currentTime + 0.05;
+        seq.forEach((m, i) => this.notaPiano(midi(m), t0 + i * 0.16, 0.34 + Math.random() * 0.12, alvos, { ataque: 0.002, dur: 0.9, brilho: 1.8 }));
+        if (Math.random() < 0.5) this.notaPiano(midi(ac[0]), t0, 0.4, alvos, { dur: 1.6 });
+        compasso++;
+        timers.push(setTimeout(arpejo, 2600 + Math.random() * 1800));
+      };
+      arpejo();
+    } else if (id === "pad") {
+      const rev = this.reverb(5.5);
       const mix = this.ganho(0.9);
       rev.connect(mix).connect(saida);
-      const seco = this.ganho(0.5);
+      const seco = this.ganho(0.3);
       seco.connect(saida);
-      // base grave contínua (muito suave)
-      [130.81, 196.0].forEach((f) => {
-        const o = ctx.createOscillator();
-        o.type = "sine";
-        o.frequency.value = f;
-        const g = this.ganho(0.035);
-        o.connect(g).connect(rev);
-        o.start();
-        parar.push(o);
-        parar.push(this.lfo(0.05, 0.02, g.gain));
-      });
-      const escala = [261.63, 293.66, 329.63, 392.0, 440.0, 523.25, 587.33];
-      const nota = () => {
-        const f = escala[Math.floor(Math.random() * escala.length)];
+      let i = Math.floor(Math.random() * 4);
+      const acorde = () => {
+        const ac = ACORDES[i % ACORDES.length];
+        i++;
         const t = ctx.currentTime;
-        [[1, "sine", 0.18], [2, "triangle", 0.05]].forEach(([mult, tipo, amp]) => {
-          const o = ctx.createOscillator();
-          o.type = tipo;
-          o.frequency.value = f * mult;
-          const g = ctx.createGain();
-          g.gain.setValueAtTime(0.0001, t);
-          g.gain.linearRampToValueAtTime(amp, t + 0.04);
-          g.gain.exponentialRampToValueAtTime(0.0001, t + 4.2);
-          o.connect(g);
-          g.connect(rev);
-          g.connect(seco);
-          o.start(t);
-          o.stop(t + 4.4);
+        const dur = 9;
+        const lp = this.filtro("lowpass", 700, 0.4);
+        lp.frequency.setValueAtTime(500, t);
+        lp.frequency.linearRampToValueAtTime(1500, t + dur * 0.5);
+        lp.frequency.linearRampToValueAtTime(600, t + dur);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.11, t + 3.2);
+        g.gain.setValueAtTime(0.11, t + dur - 3.4);
+        g.gain.linearRampToValueAtTime(0.0001, t + dur + 1.5);
+        lp.connect(g);
+        g.connect(rev);
+        g.connect(seco);
+        ac.forEach((m) => {
+          [-9, 0, 9].forEach((cents) => {
+            const o = ctx.createOscillator();
+            o.type = "sawtooth";
+            o.frequency.value = midi(m);
+            o.detune.value = cents + (Math.random() * 4 - 2);
+            const og = ctx.createGain();
+            og.gain.value = 0.55 / (1 + (m - 40) / 24);
+            o.connect(og).connect(lp);
+            o.start(t);
+            o.stop(t + dur + 1.7);
+          });
         });
-        timers.push(setTimeout(nota, 2200 + Math.random() * 3200));
+        timers.push(setTimeout(acorde, (dur - 2.2) * 1000));
       };
-      nota();
+      acorde();
+    } else if (id === "tigelas") {
+      const rev = this.reverb(6);
+      rev.connect(this.ganho(1)).connect(saida);
+      const seco = this.ganho(0.35);
+      seco.connect(saida);
+      const bases = [130.81, 164.81, 196.0, 261.63, 329.63];
+      const bater = () => {
+        const f = bases[Math.floor(Math.random() * bases.length)];
+        const t = ctx.currentTime + 0.05;
+        [[1, 1], [2.76, 0.32], [5.4, 0.12], [8.9, 0.05]].forEach(([r, w]) => {
+          [0, 1.7].forEach((bat) => {
+            const o = ctx.createOscillator();
+            o.type = "sine";
+            o.frequency.value = f * r + bat * (r > 1 ? 1.5 : 1);
+            const g = ctx.createGain();
+            const dec = 11 / Math.pow(r, 0.5);
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.linearRampToValueAtTime(0.24 * w, t + 0.03);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + dec);
+            o.connect(g);
+            g.connect(rev);
+            g.connect(seco);
+            o.start(t);
+            o.stop(t + dec + 0.1);
+          });
+        });
+        timers.push(setTimeout(bater, 6500 + Math.random() * 5500));
+      };
+      bater();
     }
     return { stop: fim };
   }

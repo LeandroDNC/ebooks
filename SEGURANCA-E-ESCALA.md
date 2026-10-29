@@ -71,3 +71,29 @@ Todas as ocorrências de "LIZIVIDA" viraram **Íntima Graça**: títulos, textos
 - `admin.html` = painel (indicadores e graficos); `admin-ebook.html` = editor. Rode `supabase/schema.sql` de novo: cria `books.published_at`, a tabela `orders` (so o servidor grava, via webhook de pagamento com chave de servico) e a funcao `admin_dashboard()` (so a administradora executa).
 - Sem a tabela `orders` alimentada, vendas e receita aparecem zeradas; o ranking usa os ebooks mais obtidos gratis.
 
+
+## Varredura de segurança (outubro/2026)
+
+**Princípio:** o navegador nunca é confiável. Tudo que importa é validado e autorizado no banco.
+
+- **SQL injection:** o site não monta SQL por texto. Todas as consultas passam por supabase-js/PostgREST (parametrizadas) e funções SQL com argumentos tipados. Testado contra o projeto real: payloads `' OR '1'='1` e `UNION SELECT` retornam vazio.
+- **Quem pode o quê (RLS + permissões):** visitante só lê livros publicados; `user_library`, `admin_users`, `orders` e `book_content` ficam fechados; só a administradora grava livros; o cliente não consegue inserir na biblioteca nem criar pedidos (só funções do servidor).
+- **Validação no banco:** `supabase/schema.sql` (bloco "VARREDURA DE SEGURANCA") valida o formato de `books` e o JSON do ebook (tipos de bloco, cores, textos até 6000 caracteres, até 200 páginas, imagens só `https://`) com um gatilho que recusa o que fugir das regras, mesmo que alguém adultere o editor.
+- **Funções:** visitante só executa `is_admin`; as demais exigem login. Novas funções já nascem fechadas.
+- **Limites:** tempo máximo por consulta (8 s visitante, 15 s logado), teto de 500 itens por biblioteca, progresso de 0 a 100.
+- **Front-end:** todo texto vindo do banco é escapado antes de ir para a página; links de imagem passam por `safeUrl`; preferências salvas no navegador são saneadas ao ler; a CSP bloqueia scripts externos e `eval`.
+- **Administradora:** definida por e-mail em `supabase/definir-admin.sql` (ninguém "chega primeiro" e assume o painel).
+
+### Ações no painel do Supabase (não dá para fazer por SQL)
+1. Authentication > Rate Limits: manter limites baixos de cadastro/login por hora.
+2. Authentication > Attack Protection: ativar **CAPTCHA** (Turnstile da Cloudflare é gratuito).
+3. Authentication > Sign In / Providers > Email: senha mínima de 8 caracteres.
+4. Authentication > URL Configuration: só o domínio oficial em Site URL e Redirect URLs.
+5. Conta Supabase e GitHub com 2FA; senha do banco trocada e fora de qualquer arquivo.
+6. Repositório do GitHub privado, com Secret scanning e Push protection ligados.
+
+## App instalável (PWA)
+- `manifest.webmanifest`, `sw.js`, `offline.html`, `js/app.js` e `css/app.css`.
+- O popup de instalação aparece nas páginas públicas (Android, Windows/desktop e iOS) e volta depois de 14 dias se for dispensado.
+- Instalado, o app mostra só **Loja** e **Biblioteca** (sem o site de divulgação).
+- O service worker usa rede primeiro, ignora Supabase e outros domínios e nunca guarda páginas do admin.

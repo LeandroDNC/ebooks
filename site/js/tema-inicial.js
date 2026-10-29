@@ -5,6 +5,11 @@
   if (!local && window.console) {
     ["log", "info", "debug", "warn", "error", "trace"].forEach(function (m) { console[m] = function () {}; });
   }
+  // App instalado: mostra só a área do usuário (a página inicial de divulgação vai para a biblioteca)
+  try {
+    var app = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+    if (app && /^\/(index(\.html)?)?$/.test(location.pathname)) { location.replace("biblioteca.html?app=1"); return; }
+  } catch (e) { /* segue normalmente */ }
   try {
     // chaves "lizivida:*" (nome antigo) -> "intimagraca:*"
     var antigas = [];
