@@ -1,7 +1,7 @@
 // Editor de ebooks — Íntima Graça admin.
 // Rascunhos: localStorage. Publicação: tabelas books / book_content (esquema em supabase/schema.sql, fora da pasta pública).
-import { supabase } from "./supabase.js";
-import { FONTS, esc, renderPage, renderCover, buildSequence, FlipBook, coverStyle, coverAutoColor } from "./book-render.js";
+import { supabase } from "./supabase.js?v=202610291500";
+import { FONTS, esc, renderPage, renderCover, buildSequence, FlipBook, coverStyle, coverAutoColor } from "./book-render.js?v=202610291500";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];

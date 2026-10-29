@@ -1,6 +1,6 @@
 // Painel do administrador: indicadores, gráficos (SVG puro) e ranking.
 // Dados: função admin_dashboard() (1 chamada). Sem ela, calcula o que dá a partir da tabela books.
-import { supabase } from "./supabase.js";
+import { supabase } from "./supabase.js?v=202610291500";
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => UI.escapeHtml(s);

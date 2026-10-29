@@ -1,5 +1,5 @@
 // Biblioteca de ebooks do administrador: grade, filtros e escolha entre ver ou editar.
-import { supabase } from "./supabase.js";
+import { supabase } from "./supabase.js?v=202610291500";
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => UI.escapeHtml(s);

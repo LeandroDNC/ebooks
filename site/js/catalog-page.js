@@ -1,5 +1,5 @@
 // Página /devocionais: lista, filtro por categoria e busca.
-import { fetchPublished, ligarObterGratis } from "./catalog.js";
+import { fetchPublished, ligarObterGratis } from "./catalog.js?v=202610291500";
 
 const $ = (s) => document.querySelector(s);
 const params = new URLSearchParams(location.search);

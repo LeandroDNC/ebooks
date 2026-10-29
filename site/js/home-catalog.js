@@ -1,5 +1,5 @@
 // Home: troca os exemplos pelos ebooks publicados (se houver).
-import { fetchPublished, updateCategoryCounts, ligarObterGratis } from "./catalog.js";
+import { fetchPublished, updateCategoryCounts, ligarObterGratis } from "./catalog.js?v=202610291500";
 
 (async () => {
   const books = await fetchPublished();

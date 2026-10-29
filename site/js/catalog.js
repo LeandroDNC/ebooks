@@ -1,6 +1,6 @@
 // Catálogo: lê os ebooks PUBLICADOS no Supabase (tabela books) e mostra na loja.
 // Se o banco não responder ou não houver publicados, a página mantém os exemplos de js/data.js.
-import { supabase } from "./supabase.js";
+import { supabase } from "./supabase.js?v=202610291500";
 
 const brl = (n) => `R$ ${Number(n).toFixed(2).replace(".", ",")}`;
 const ehGratis = (n) => n == null || Number(n) === 0;

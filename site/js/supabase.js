@@ -2,7 +2,7 @@
 // 1) Preencha SUPABASE_URL e SUPABASE_ANON_KEY (veja .env.example na raiz do site).
 // 2) Nas páginas que precisarem, carregue este arquivo como módulo:
 //      <script type="module" src="js/supabase.js"></script>
-//    e use: import { supabase } from "./supabase.js";
+//    e use: import { supabase } from "./supabase.js?v=202610291500";
 // A chave "anon" é pública por design; a segurança vem das políticas RLS do banco.
 // NUNCA coloque a service_role key aqui.
 

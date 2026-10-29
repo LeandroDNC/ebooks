@@ -1,9 +1,9 @@
 // Leitor: abre o ebook em formato de livro. O conteúdo só é entregue pelo banco
 // para o administrador e para quem tem o ebook na biblioteca (políticas RLS).
-import { supabase } from "./supabase.js";
-import { buildSequence, FlipBook } from "./book-render.js";
-import { Marcas } from "./reader-highlight.js";
-import { iniciarFerramentas } from "./reader-tools.js";
+import { supabase } from "./supabase.js?v=202610291500";
+import { buildSequence, FlipBook } from "./book-render.js?v=202610291500";
+import { Marcas } from "./reader-highlight.js?v=202610291500";
+import { iniciarFerramentas } from "./reader-tools.js?v=202610291500";
 
 const $ = (s) => document.querySelector(s);
 const id = new URLSearchParams(location.search).get("id");

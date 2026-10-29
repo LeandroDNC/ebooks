@@ -1,6 +1,6 @@
 // Checkout: o botão "Comprar" cria o pagamento no servidor e leva ao Mercado Pago.
 // Nada secreto aqui: só a sessão do usuário e o id do ebook. Preço e entrega são no servidor.
-import { supabase } from "./supabase.js";
+import { supabase } from "./supabase.js?v=202610291500";
 
 async function comprar(id, btn) {
   if (!supabase) return;

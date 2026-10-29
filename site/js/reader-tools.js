@@ -1,8 +1,8 @@
 // Ferramentas do leitor: tema e cores, descanso para os olhos, marcador de texto e sons ambiente.
-import { renderPage } from "./book-render.js";
-import { TEMAS, CLIMAS, lerPrefs, salvarPrefs, aplicar } from "./reader-theme.js";
-import { CORES, lerSelecao } from "./reader-highlight.js";
-import { Ambiente, SONS } from "./reader-sound.js";
+import { renderPage } from "./book-render.js?v=202610291500";
+import { TEMAS, CLIMAS, lerPrefs, salvarPrefs, aplicar } from "./reader-theme.js?v=202610291500";
+import { CORES, lerSelecao } from "./reader-highlight.js?v=202610291500";
+import { Ambiente, SONS } from "./reader-sound.js?v=202610291500";
 
 const esc = (s) => UI.escapeHtml(s);
 const ico = (n, t = 20) => UI.icon(n, t);

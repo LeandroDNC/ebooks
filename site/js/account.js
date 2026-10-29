@@ -1,6 +1,6 @@
 // Login, cadastro e painel do usuário.
 // Uso do banco: Auth (login) + UMA consulta em user_library ao abrir o painel.
-import { supabase } from "./supabase.js";
+import { supabase } from "./supabase.js?v=202610291500";
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => UI.escapeHtml(s);

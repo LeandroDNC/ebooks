@@ -6,7 +6,7 @@
 //   data-url="https://..."       -> endereço do site no compartilhamento (padrão: raiz do site atual)
 // Parâmetros de teste na URL da página:  ?dia=N (1..366)  ou  ?data=MM-DD
 
-import { gerarImagem } from "./versiculo-imagem.js?v=2";
+import { gerarImagem } from "./versiculo-imagem.js?v=202610291500";
 
 const FUSO = "America/Fortaleza";
 const CACHE_KEY = "versiculo-do-dia:v2";
